@@ -20,27 +20,6 @@ export const Header = () => {
 
   return (
     <header className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-50">
-      {/* شريط المعلومات العلوي */}
-      <div className="bg-primary text-primary-foreground py-2">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center text-sm">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4" />
-                <span>{language === 'ar' ? '+966501234567' : '+966501234567'}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Mail className="w-4 h-4" />
-                <span>info@lexihub.com</span>
-              </div>
-            </div>
-            <div className="hidden md:flex items-center gap-4">
-              <span>{t('workingHours')}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* شريط التنقل الرئيسي */}
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">

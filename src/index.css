@@ -7,25 +7,25 @@
 
 @layer base {
   :root {
-    /* خلفيات رئيسية */
-    --background: 0 0% 98%;
-    --foreground: 221 83% 8%;
+    /* خلفيات رئيسية - بيج فاتح أنيق */
+    --background: 40 20% 97%;
+    --foreground: 220 65% 12%;
     
-    /* الألوان الأساسية - ذهبي وأزرق داكن للمحاماة */
-    --primary: 221 83% 8%;
-    --primary-foreground: 0 0% 98%;
-    --primary-light: 221 50% 20%;
-    --primary-glow: 45 85% 55%;
+    /* الألوان الأساسية - أزرق كحلي رسمي */
+    --primary: 220 65% 12%;
+    --primary-foreground: 40 20% 97%;
+    --primary-light: 220 45% 25%;
+    --primary-glow: 42 78% 60%;
     
-    /* ألوان ثانوية */
-    --secondary: 45 85% 55%;
-    --secondary-foreground: 221 83% 8%;
-    --secondary-light: 45 75% 65%;
+    /* ألوان ثانوية - ذهبي كلاسيكي */
+    --secondary: 42 78% 60%;
+    --secondary-foreground: 220 65% 12%;
+    --secondary-light: 42 68% 70%;
     
-    /* أكسنت للأزرار والروابط */
-    --accent: 210 50% 30%;
-    --accent-foreground: 0 0% 98%;
-    --accent-light: 210 40% 40%;
+    /* أكسنت للأزرار والروابط - كحلي متوسط */
+    --accent: 220 50% 30%;
+    --accent-foreground: 40 20% 97%;
+    --accent-light: 220 40% 45%;
     
     /* ألوان الكروت */
     --card: 0 0% 100%;
@@ -82,22 +82,22 @@
   }
 
   .dark {
-    /* الوضع الليلي للمنصة القانونية */
-    --background: 221 83% 8%;
-    --foreground: 0 0% 98%;
+    /* الوضع الليلي الرسمي - كحلي داكن أنيق */
+    --background: 220 25% 8%;
+    --foreground: 40 15% 95%;
     
-    --primary: 45 85% 55%;
-    --primary-foreground: 221 83% 8%;
-    --primary-light: 45 75% 65%;
-    --primary-glow: 45 90% 60%;
+    --primary: 42 78% 60%;
+    --primary-foreground: 220 25% 8%;
+    --primary-light: 42 68% 70%;
+    --primary-glow: 42 85% 65%;
     
-    --secondary: 210 50% 30%;
-    --secondary-foreground: 0 0% 98%;
-    --secondary-light: 210 40% 40%;
+    --secondary: 220 50% 30%;
+    --secondary-foreground: 40 15% 95%;
+    --secondary-light: 220 40% 45%;
     
-    --accent: 45 85% 55%;
-    --accent-foreground: 221 83% 8%;
-    --accent-light: 45 75% 65%;
+    --accent: 42 78% 60%;
+    --accent-foreground: 220 25% 8%;
+    --accent-light: 42 68% 70%;
     
     --card: 221 50% 12%;
     --card-foreground: 0 0% 98%;
