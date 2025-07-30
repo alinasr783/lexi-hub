@@ -1,8 +1,10 @@
 import { Scale, Phone, Mail, MapPin, Facebook, Linkedin, Twitter } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useContactInfo } from '@/hooks/useContactInfo';
 
 export const Footer = () => {
   const { language, t } = useLanguage();
+  const { contactInfo } = useContactInfo();
 
   return (
     <footer className="bg-primary text-primary-foreground">
@@ -15,7 +17,7 @@ export const Footer = () => {
                 <Scale className="w-6 h-6 text-secondary-foreground" />
               </div>
               <div className="font-bold text-xl">
-                {language === 'ar' ? 'ليكسي هاب' : 'Lexi Hub'}
+                {contactInfo?.site_name || (language === 'ar' ? 'ليكسي هاب' : 'Lexi Hub')}
               </div>
             </div>
             <p className="text-primary-foreground/80 leading-relaxed">
@@ -66,43 +68,59 @@ export const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-secondary" />
-                <span className="text-primary-foreground/80">+966501234567</span>
+                <span className="text-primary-foreground/80">
+                  {contactInfo?.phone || '+966501234567'}
+                </span>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-secondary" />
-                <span className="text-primary-foreground/80">info@lexihub.com</span>
+                <span className="text-primary-foreground/80">
+                  {contactInfo?.email || 'info@lexihub.com'}
+                </span>
               </div>
               <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-secondary mt-1" />
                 <span className="text-primary-foreground/80">
-                  {language === 'ar' 
+                  {contactInfo?.address || (language === 'ar' 
                     ? 'الرياض، حي الملك فهد، مبنى الأعمال، الطابق الخامس'
                     : 'Riyadh, King Fahd District, Business Building, 5th Floor'
-                  }
+                  )}
                 </span>
               </div>
             </div>
 
             {/* وسائل التواصل الاجتماعي */}
             <div className="flex gap-3 pt-2">
-              <a 
-                href="#" 
-                className="bg-secondary/20 p-2 rounded-lg hover:bg-secondary hover:text-secondary-foreground transition-smooth"
-              >
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a 
-                href="#" 
-                className="bg-secondary/20 p-2 rounded-lg hover:bg-secondary hover:text-secondary-foreground transition-smooth"
-              >
-                <Linkedin className="w-5 h-5" />
-              </a>
-              <a 
-                href="#" 
-                className="bg-secondary/20 p-2 rounded-lg hover:bg-secondary hover:text-secondary-foreground transition-smooth"
-              >
-                <Twitter className="w-5 h-5" />
-              </a>
+              {contactInfo?.facebook && (
+                <a 
+                  href={contactInfo.facebook} 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-secondary/20 p-2 rounded-lg hover:bg-secondary hover:text-secondary-foreground transition-smooth"
+                >
+                  <Facebook className="w-5 h-5" />
+                </a>
+              )}
+              {contactInfo?.linkedin && (
+                <a 
+                  href={contactInfo.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer" 
+                  className="bg-secondary/20 p-2 rounded-lg hover:bg-secondary hover:text-secondary-foreground transition-smooth"
+                >
+                  <Linkedin className="w-5 h-5" />
+                </a>
+              )}
+              {contactInfo?.twitter && (
+                <a 
+                  href={contactInfo.twitter}
+                  target="_blank"
+                  rel="noopener noreferrer" 
+                  className="bg-secondary/20 p-2 rounded-lg hover:bg-secondary hover:text-secondary-foreground transition-smooth"
+                >
+                  <Twitter className="w-5 h-5" />
+                </a>
+              )}
             </div>
           </div>
         </div>
@@ -110,7 +128,7 @@ export const Footer = () => {
         {/* الحقوق والرابط الإداري */}
         <div className="border-t border-primary-foreground/20 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-primary-foreground/60 text-center md:text-left">
-            © 2024 {language === 'ar' ? 'ليكسي هاب' : 'Lexi Hub'}. {t('rights')}.
+            © 2024 {contactInfo?.site_name || (language === 'ar' ? 'ليكسي هاب' : 'Lexi Hub')}. {t('rights')}.
           </p>
           
           {/* رابط المدير */}

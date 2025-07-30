@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -14,7 +14,21 @@ import { useToast } from '@/hooks/use-toast';
 
 const Consultation = () => {
   const { language } = useLanguage();
+  const { toast } = useToast();
   const [selectedType, setSelectedType] = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    city: '',
+    caseType: '',
+    consultationType: '',
+    caseDescription: '',
+    preferredDate: '',
+    preferredTime: '',
+    notes: ''
+  });
+  const bookingFormRef = useRef(null);
 
   const consultationTypes = [
     {
@@ -68,6 +82,80 @@ const Consultation = () => {
     '04:00 م',
     '05:00 م'
   ];
+
+  const handleTypeSelection = (typeId) => {
+    setSelectedType(typeId);
+    setFormData(prev => ({ ...prev, consultationType: typeId }));
+    
+    // Scroll to booking form
+    setTimeout(() => {
+      bookingFormRef.current?.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+    }, 100);
+  };
+
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!formData.name || !formData.phone || !formData.email || !formData.caseType || !formData.consultationType || !formData.caseDescription) {
+      toast({
+        title: "خطأ",
+        description: "يرجى ملء جميع الحقول المطلوبة",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase.from('consultation_bookings').insert([
+        {
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+          case_type: formData.caseType,
+          consultation_type: formData.consultationType,
+          message: `${formData.caseDescription}\n\nملاحظات إضافية: ${formData.notes || 'لا توجد'}`,
+          preferred_date: formData.preferredDate || null,
+          preferred_time: formData.preferredTime || null
+        }
+      ]);
+
+      if (error) throw error;
+
+      toast({
+        title: "تم إرسال الطلب بنجاح",
+        description: "سنتواصل معك قريباً لتأكيد موعد الاستشارة",
+      });
+
+      // Reset form
+      setFormData({
+        name: '',
+        phone: '',
+        email: '',
+        city: '',
+        caseType: '',
+        consultationType: '',
+        caseDescription: '',
+        preferredDate: '',
+        preferredTime: '',
+        notes: ''
+      });
+      setSelectedType('');
+
+    } catch (error) {
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء إرسال الطلب. يرجى المحاولة مرة أخرى",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div className={`min-h-screen ${language === 'ar' ? 'font-cairo' : 'font-inter'}`} dir={language === 'ar' ? 'rtl' : 'ltr'}>
@@ -126,10 +214,10 @@ const Consultation = () => {
                     </ul>
                     
                     <Button 
-                      onClick={() => setSelectedType(type.id)}
-                      className="w-full btn-secondary group-hover:shadow-glow"
+                      onClick={() => handleTypeSelection(type.id)}
+                      className={`w-full ${selectedType === type.id ? 'btn-primary' : 'btn-secondary'} group-hover:shadow-glow`}
                     >
-                      اختر هذا النوع
+                      {selectedType === type.id ? 'تم الاختيار' : 'اختر هذا النوع'}
                     </Button>
                   </div>
                 );
@@ -139,7 +227,7 @@ const Consultation = () => {
         </section>
 
         {/* Booking Form */}
-        <section className="py-20 bg-gradient-subtle">
+        <section ref={bookingFormRef} className="py-20 bg-gradient-subtle">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               <div className="text-center mb-12">
@@ -150,26 +238,50 @@ const Consultation = () => {
               </div>
 
               <div className="card-elegant">
-                <form className="space-y-8">
+                <form onSubmit={handleSubmit} className="space-y-8">
                   {/* Personal Info */}
                   <div>
                     <h3 className="text-2xl font-semibold mb-6">المعلومات الشخصية</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <Label htmlFor="fullName">الاسم الكامل *</Label>
-                        <Input id="fullName" placeholder="أدخل اسمك الكامل" />
+                        <Input 
+                          id="fullName" 
+                          placeholder="أدخل اسمك الكامل" 
+                          value={formData.name}
+                          onChange={(e) => handleInputChange('name', e.target.value)}
+                          required
+                        />
                       </div>
                       <div>
                         <Label htmlFor="phone">رقم الهاتف *</Label>
-                        <Input id="phone" placeholder="أدخل رقم هاتفك" />
+                        <Input 
+                          id="phone" 
+                          placeholder="أدخل رقم هاتفك" 
+                          value={formData.phone}
+                          onChange={(e) => handleInputChange('phone', e.target.value)}
+                          required
+                        />
                       </div>
                       <div>
                         <Label htmlFor="email">البريد الإلكتروني *</Label>
-                        <Input id="email" type="email" placeholder="أدخل بريدك الإلكتروني" />
+                        <Input 
+                          id="email" 
+                          type="email" 
+                          placeholder="أدخل بريدك الإلكتروني" 
+                          value={formData.email}
+                          onChange={(e) => handleInputChange('email', e.target.value)}
+                          required
+                        />
                       </div>
                       <div>
                         <Label htmlFor="city">المدينة</Label>
-                        <Input id="city" placeholder="أدخل مدينتك" />
+                        <Input 
+                          id="city" 
+                          placeholder="أدخل مدينتك" 
+                          value={formData.city}
+                          onChange={(e) => handleInputChange('city', e.target.value)}
+                        />
                       </div>
                     </div>
                   </div>
@@ -180,7 +292,7 @@ const Consultation = () => {
                     <div className="space-y-6">
                       <div>
                         <Label htmlFor="caseType">نوع القضية *</Label>
-                        <Select>
+                        <Select value={formData.caseType} onValueChange={(value) => handleInputChange('caseType', value)}>
                           <SelectTrigger>
                             <SelectValue placeholder="اختر نوع القضية" />
                           </SelectTrigger>
@@ -196,7 +308,7 @@ const Consultation = () => {
                       
                       <div>
                         <Label htmlFor="consultationType">نوع الاستشارة *</Label>
-                        <Select>
+                        <Select value={formData.consultationType} onValueChange={(value) => handleInputChange('consultationType', value)}>
                           <SelectTrigger>
                             <SelectValue placeholder="اختر نوع الاستشارة" />
                           </SelectTrigger>
@@ -214,6 +326,9 @@ const Consultation = () => {
                           id="caseDescription" 
                           placeholder="اكتب وصفاً مفصلاً عن قضيتك أو استفسارك القانوني..." 
                           rows={6}
+                          value={formData.caseDescription}
+                          onChange={(e) => handleInputChange('caseDescription', e.target.value)}
+                          required
                         />
                       </div>
                     </div>
@@ -225,11 +340,16 @@ const Consultation = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <Label htmlFor="preferredDate">التاريخ المفضل *</Label>
-                        <Input id="preferredDate" type="date" />
+                        <Input 
+                          id="preferredDate" 
+                          type="date" 
+                          value={formData.preferredDate}
+                          onChange={(e) => handleInputChange('preferredDate', e.target.value)}
+                        />
                       </div>
                       <div>
                         <Label htmlFor="preferredTime">الوقت المفضل *</Label>
-                        <Select>
+                        <Select value={formData.preferredTime} onValueChange={(value) => handleInputChange('preferredTime', value)}>
                           <SelectTrigger>
                             <SelectValue placeholder="اختر الوقت المفضل" />
                           </SelectTrigger>
@@ -252,6 +372,8 @@ const Consultation = () => {
                       id="notes" 
                       placeholder="أي ملاحظات أو متطلبات خاصة..." 
                       rows={3}
+                      value={formData.notes}
+                      onChange={(e) => handleInputChange('notes', e.target.value)}
                     />
                   </div>
 

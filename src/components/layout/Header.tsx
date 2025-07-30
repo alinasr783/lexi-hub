@@ -3,11 +3,13 @@ import { Moon, Sun, Globe, Menu, X, Scale, Phone, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useTheme } from '@/hooks/useTheme';
+import { useContactInfo } from '@/hooks/useContactInfo';
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
   const { theme, toggleTheme } = useTheme();
+  const { contactInfo } = useContactInfo();
 
   const navigation = [
     { key: 'home', href: '/' },
@@ -29,7 +31,7 @@ export const Header = () => {
               <Scale className="w-6 h-6 text-primary-foreground" />
             </div>
             <div className="font-bold text-xl text-gradient">
-              {language === 'ar' ? 'ليكسي هاب' : 'Lexi Hub'}
+              {contactInfo?.site_name || (language === 'ar' ? 'ليكسي هاب' : 'Lexi Hub')}
             </div>
           </div>
 
