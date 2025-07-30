@@ -1,6 +1,8 @@
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { useLanguage } from '@/hooks/useLanguage';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 import { Award, Users, Target, Eye, Heart, Shield } from 'lucide-react';
 
 const About = () => {
@@ -156,12 +158,9 @@ const About = () => {
               تواصل معنا اليوم واحصل على استشارة قانونية متخصصة من فريقنا المحترف
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a 
-                href="/consultation" 
-                className="btn-secondary inline-flex items-center justify-center rounded-lg px-8 py-4 font-medium transition-all duration-300 shadow-md hover:shadow-xl hover:scale-105"
-              >
-                احجز استشارة مجانية
-              </a>
+              <Button asChild className="btn-secondary">
+                <Link to="/consultation">احجز استشارة مجانية</Link>
+              </Button>
               <a 
                 href="/contact" 
                 className="btn-outline inline-flex items-center justify-center rounded-lg px-8 py-4 font-medium transition-all duration-300 hover:shadow-lg hover:scale-105"

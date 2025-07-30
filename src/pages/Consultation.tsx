@@ -14,9 +14,11 @@ import { useToast } from '@/hooks/use-toast';
 
 const Consultation = () => {
   const { language } = useLanguage();
+  const [selectedType, setSelectedType] = useState('');
 
   const consultationTypes = [
     {
+      id: 'phone',
       icon: Phone,
       title: 'استشارة هاتفية',
       description: 'استشارة سريعة عبر الهاتف لمدة 30 دقيقة',
@@ -25,6 +27,7 @@ const Consultation = () => {
       features: ['استشارة فورية', 'تقييم أولي للحالة', 'توجيه قانوني عام']
     },
     {
+      id: 'video',
       icon: Video,
       title: 'استشارة مرئية',
       description: 'جلسة استشارية مفصلة عبر الفيديو لمدة ساعة',
@@ -33,6 +36,7 @@ const Consultation = () => {
       features: ['استشارة شاملة', 'مراجعة الوثائق', 'خطة عمل واضحة', 'تقرير مكتوب']
     },
     {
+      id: 'office',
       icon: MessageCircle,
       title: 'زيارة المكتب',
       description: 'جلسة استشارية شخصية في مكتبنا',
@@ -121,7 +125,10 @@ const Consultation = () => {
                       ))}
                     </ul>
                     
-                    <Button className="w-full btn-secondary group-hover:shadow-glow">
+                    <Button 
+                      onClick={() => setSelectedType(type.id)}
+                      className="w-full btn-secondary group-hover:shadow-glow"
+                    >
                       اختر هذا النوع
                     </Button>
                   </div>

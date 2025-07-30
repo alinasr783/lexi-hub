@@ -1,6 +1,7 @@
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { useLanguage } from '@/hooks/useLanguage';
+import { Link } from 'react-router-dom';
 import { Scale, Building, Users, FileText, Gavel, Shield, Clock, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -118,8 +119,8 @@ const Services = () => {
                           </div>
                         </div>
                         
-                        <Button className="btn-secondary">
-                          احجز استشارة
+                        <Button asChild className="btn-secondary">
+                          <Link to="/consultation">احجز استشارة</Link>
                         </Button>
                       </div>
                     </div>
@@ -138,7 +139,7 @@ const Services = () => {
               احجز استشارتك المجانية الآن واحصل على رأي قانوني متخصص
             </p>
             <Button asChild size="lg" className="btn-secondary text-lg px-8 py-4">
-              <a href="/consultation">احجز استشارة مجانية</a>
+              <Link to="/consultation">احجز استشارة مجانية</Link>
             </Button>
           </div>
         </section>
