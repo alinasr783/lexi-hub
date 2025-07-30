@@ -21,30 +21,33 @@ const AdminLogin = () => {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      // التحقق من جدول admins بدلاً من auth
+      const { data: admin, error } = await supabase
+        .from('admins')
+        .select('*')
+        .eq('email', email)
+        .eq('password', password)
+        .eq('is_active', true)
+        .single();
 
-      if (error) {
+      if (error || !admin) {
         toast({
           title: "خطأ في تسجيل الدخول",
-          description: error.message === "Invalid login credentials" 
-            ? "بيانات الدخول غير صحيحة" 
-            : "حدث خطأ أثناء تسجيل الدخول",
+          description: "بيانات الدخول غير صحيحة أو الحساب غير مفعل",
           variant: "destructive",
         });
         return;
       }
 
-      if (data.user) {
-        // التحقق من صلاحيات الإدارة (يمكن تحسينه لاحقاً)
-        toast({
-          title: "تم تسجيل الدخول بنجاح",
-          description: "مرحباً بك في لوحة الإدارة",
-        });
-        navigate('/admin/dashboard');
-      }
+      // حفظ بيانات الإدمن في localStorage
+      localStorage.setItem('admin', JSON.stringify(admin));
+      
+      toast({
+        title: "تم تسجيل الدخول بنجاح",
+        description: `مرحباً بك ${admin.name}`,
+      });
+      navigate('/admin/dashboard');
+      
     } catch (error) {
       toast({
         title: "خطأ",
