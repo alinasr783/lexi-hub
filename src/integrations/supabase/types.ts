@@ -131,6 +131,48 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_info: {
+        Row: {
+          address: string
+          email: string
+          facebook: string | null
+          id: string
+          linkedin: string | null
+          map_embed: string | null
+          office_hours: string | null
+          phone: string
+          twitter: string | null
+          updated_at: string
+          whatsapp: string | null
+        }
+        Insert: {
+          address: string
+          email: string
+          facebook?: string | null
+          id?: string
+          linkedin?: string | null
+          map_embed?: string | null
+          office_hours?: string | null
+          phone: string
+          twitter?: string | null
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          address?: string
+          email?: string
+          facebook?: string | null
+          id?: string
+          linkedin?: string | null
+          map_embed?: string | null
+          office_hours?: string | null
+          phone?: string
+          twitter?: string | null
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
       faqs: {
         Row: {
           answer: string
@@ -155,6 +197,81 @@ export type Database = {
           id?: string
           order_index?: number | null
           question?: string
+        }
+        Relationships: []
+      }
+      jobs: {
+        Row: {
+          apply_email: string | null
+          benefits: string[] | null
+          created_at: string
+          description: string
+          employment_type: string | null
+          experience_level: string | null
+          id: string
+          is_active: boolean | null
+          position: string
+          requirements: string[] | null
+          salary_range: string | null
+          updated_at: string
+        }
+        Insert: {
+          apply_email?: string | null
+          benefits?: string[] | null
+          created_at?: string
+          description: string
+          employment_type?: string | null
+          experience_level?: string | null
+          id?: string
+          is_active?: boolean | null
+          position: string
+          requirements?: string[] | null
+          salary_range?: string | null
+          updated_at?: string
+        }
+        Update: {
+          apply_email?: string | null
+          benefits?: string[] | null
+          created_at?: string
+          description?: string
+          employment_type?: string | null
+          experience_level?: string | null
+          id?: string
+          is_active?: boolean | null
+          position?: string
+          requirements?: string[] | null
+          salary_range?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      page_contents: {
+        Row: {
+          content: string
+          id: string
+          image_url: string | null
+          meta_description: string | null
+          page_key: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          id?: string
+          image_url?: string | null
+          meta_description?: string | null
+          page_key: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          id?: string
+          image_url?: string | null
+          meta_description?: string | null
+          page_key?: string
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
