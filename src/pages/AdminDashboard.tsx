@@ -26,9 +26,7 @@ const AdminDashboard = () => {
     totalArticles: 0,
     totalServices: 0,
     totalTeamMembers: 0,
-    totalConsultations: 0,
-    totalContacts: 0,
-    totalTestimonials: 0
+    totalConsultations: 0
   });
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -62,25 +60,19 @@ const AdminDashboard = () => {
         { count: articlesCount },
         { count: servicesCount },
         { count: teamCount },
-        { count: consultationsCount },
-        { count: contactsCount },
-        { count: testimonialsCount }
+        { count: consultationsCount }
       ] = await Promise.all([
         supabase.from('articles').select('*', { count: 'exact', head: true }),
         supabase.from('services').select('*', { count: 'exact', head: true }),
         supabase.from('team_members').select('*', { count: 'exact', head: true }),
-        supabase.from('consultation_bookings').select('*', { count: 'exact', head: true }),
-        supabase.from('contact_forms').select('*', { count: 'exact', head: true }),
-        supabase.from('testimonials').select('*', { count: 'exact', head: true })
+        supabase.from('consultation_bookings').select('*', { count: 'exact', head: true })
       ]);
 
       setStats({
         totalArticles: articlesCount || 0,
         totalServices: servicesCount || 0,
         totalTeamMembers: teamCount || 0,
-        totalConsultations: consultationsCount || 0,
-        totalContacts: contactsCount || 0,
-        totalTestimonials: testimonialsCount || 0
+        totalConsultations: consultationsCount || 0
       });
     } catch (error) {
       console.error('Error loading stats:', error);
@@ -148,22 +140,6 @@ const AdminDashboard = () => {
       color: 'text-orange-600',
       bgColor: 'bg-orange-100',
       link: '/admin/consultations'
-    },
-    {
-      title: 'رسائل التواصل',
-      value: stats.totalContacts,
-      icon: MessageSquare,
-      color: 'text-red-600',
-      bgColor: 'bg-red-100',
-      link: '/admin/contacts'
-    },
-    {
-      title: 'آراء العملاء',
-      value: stats.totalTestimonials,
-      icon: TrendingUp,
-      color: 'text-indigo-600',
-      bgColor: 'bg-indigo-100',
-      link: '/admin/testimonials'
     }
   ];
 
@@ -205,7 +181,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {statsCards.map((stat, index) => {
             const Icon = stat.icon;
             return (
@@ -230,10 +206,9 @@ const AdminDashboard = () => {
 
         {/* Quick Actions */}
         <Tabs defaultValue="content" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="content">إدارة المحتوى</TabsTrigger>
-            <TabsTrigger value="communications">التواصل</TabsTrigger>
-            <TabsTrigger value="settings">الإعدادات</TabsTrigger>
+            <TabsTrigger value="consultations">الاستشارات</TabsTrigger>
           </TabsList>
 
           <TabsContent value="content" className="space-y-6">
@@ -309,7 +284,7 @@ const AdminDashboard = () => {
             </div>
           </TabsContent>
 
-          <TabsContent value="communications" className="space-y-6">
+          <TabsContent value="consultations" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
@@ -331,27 +306,6 @@ const AdminDashboard = () => {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <MessageSquare className="w-5 h-5" />
-                    رسائل التواصل
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-sm text-muted-foreground">
-                    عرض رسائل التواصل من العملاء
-                  </p>
-                  <Button variant="outline" size="sm" onClick={() => navigate('/admin/contacts')}>
-                    عرض الرسائل ({stats.totalContacts})
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="settings" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
                     <Settings className="w-5 h-5" />
                     إعدادات الموقع
                   </CardTitle>
@@ -362,23 +316,6 @@ const AdminDashboard = () => {
                   </p>
                   <Button variant="outline" size="sm" onClick={() => navigate('/admin/settings')}>
                     تعديل الإعدادات
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5" />
-                    التقارير
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-sm text-muted-foreground">
-                    عرض تقارير الاستخدام والإحصائيات
-                  </p>
-                  <Button variant="outline" size="sm" onClick={() => navigate('/admin/analytics')}>
-                    عرض التقارير
                   </Button>
                 </CardContent>
               </Card>
