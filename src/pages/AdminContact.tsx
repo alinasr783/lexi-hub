@@ -29,7 +29,7 @@ const AdminContact = () => {
 
   useEffect(() => {
     // Check if user is authenticated
-    const adminData = localStorage.getItem('adminData');
+    const adminData = localStorage.getItem('admin');
     if (!adminData) {
       navigate('/admin/login');
       return;
