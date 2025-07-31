@@ -18,7 +18,9 @@ import {
   LogOut,
   BarChart3,
   Palette,
-  Star
+  Star,
+  BookOpen,
+  Phone
 } from 'lucide-react';
 
 const AdminDashboard = () => {
@@ -345,6 +347,23 @@ const AdminDashboard = () => {
                   </p>
                   <Button variant="outline" size="sm" onClick={() => navigate('/admin/contact')}>
                     إدارة بيانات التواصل
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BookOpen className="w-5 h-5" />
+                    صفحة من نحن
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    إدارة محتوى صفحة من نحن والتعريف بالمكتب
+                  </p>
+                  <Button variant="outline" size="sm" onClick={() => navigate('/admin/about')}>
+                    تعديل الصفحة
                   </Button>
                 </CardContent>
               </Card>

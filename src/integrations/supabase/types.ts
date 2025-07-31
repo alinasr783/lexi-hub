@@ -91,40 +91,40 @@ export type Database = {
       }
       consultation_bookings: {
         Row: {
-          case_type: string
+          case_type: string | null
           consultation_type: string | null
           created_at: string | null
           email: string
           id: string
           message: string | null
           name: string
-          phone: string
+          phone: string | null
           preferred_date: string | null
           preferred_time: string | null
           status: string | null
         }
         Insert: {
-          case_type: string
+          case_type?: string | null
           consultation_type?: string | null
           created_at?: string | null
           email: string
           id?: string
           message?: string | null
           name: string
-          phone: string
+          phone?: string | null
           preferred_date?: string | null
           preferred_time?: string | null
           status?: string | null
         }
         Update: {
-          case_type?: string
+          case_type?: string | null
           consultation_type?: string | null
           created_at?: string | null
           email?: string
           id?: string
           message?: string | null
           name?: string
-          phone?: string
+          phone?: string | null
           preferred_date?: string | null
           preferred_time?: string | null
           status?: string | null
