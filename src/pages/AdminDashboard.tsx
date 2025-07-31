@@ -335,13 +335,30 @@ const AdminDashboard = () => {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
+                    <MessageSquare className="w-5 h-5" />
+                    معلومات التواصل
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    إدارة أرقام الهاتف والعنوان ووسائل التواصل
+                  </p>
+                  <Button variant="outline" size="sm" onClick={() => navigate('/admin/contact')}>
+                    إدارة بيانات التواصل
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
                     <Settings className="w-5 h-5" />
                     إعدادات الموقع
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-sm text-muted-foreground">
-                    إدارة معلومات التواصل والإعدادات العامة
+                    إدارة الألوان والثيم والإعدادات العامة
                   </p>
                   <Button variant="outline" size="sm" onClick={() => navigate('/admin/site-settings')}>
                     تعديل الإعدادات

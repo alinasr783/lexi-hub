@@ -66,7 +66,15 @@ export const ServicesSection = () => {
                   <IconComponent className="w-8 h-8 text-primary-foreground" />
                 </div>
                 <h3 className="text-2xl font-semibold mb-4 text-center">{service.title}</h3>
-                <p className="text-muted-foreground text-center leading-relaxed">{service.description}</p>
+                <p className="text-muted-foreground text-center leading-relaxed mb-6">{service.description}</p>
+                <div className="text-center">
+                  <a 
+                    href="/consultation" 
+                    className="inline-flex items-center justify-center px-6 py-3 bg-gradient-primary text-primary-foreground rounded-lg hover:scale-105 transition-smooth font-medium"
+                  >
+                    احجز استشارة
+                  </a>
+                </div>
               </div>
             );
           })}
