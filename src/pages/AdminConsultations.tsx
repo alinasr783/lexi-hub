@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
   Scale, 
   Search, 
@@ -16,7 +17,10 @@ import {
   Phone,
   Mail,
   User,
-  MessageSquare
+  MessageSquare,
+  CheckCircle,
+  XCircle,
+  AlertCircle
 } from 'lucide-react';
 
 interface Consultation {
@@ -37,6 +41,7 @@ const AdminConsultations = () => {
   const [consultations, setConsultations] = useState<Consultation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -73,6 +78,30 @@ const AdminConsultations = () => {
     }
   };
 
+  const updateConsultationStatus = async (id: string, status: string) => {
+    try {
+      const { error } = await supabase
+        .from('consultation_bookings')
+        .update({ status })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: "تم التحديث",
+        description: "تم تحديث حالة الطلب بنجاح",
+      });
+      
+      loadConsultations();
+    } catch (error) {
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء تحديث حالة الطلب",
+        variant: "destructive",
+      });
+    }
+  };
+
   const updateStatus = async (id: string, newStatus: string) => {
     try {
       const { error } = await supabase
@@ -97,11 +126,43 @@ const AdminConsultations = () => {
     }
   };
 
-  const filteredConsultations = consultations.filter(consultation =>
-    consultation.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    consultation.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    consultation.case_type.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredConsultations = consultations.filter(consultation => {
+    const matchesSearch = consultation.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      consultation.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      consultation.case_type.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = statusFilter === 'all' || consultation.status === statusFilter;
+    
+    return matchesSearch && matchesStatus;
+  });
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'completed': return <CheckCircle className="w-4 h-4 text-success" />;
+      case 'cancelled': return <XCircle className="w-4 h-4 text-destructive" />;
+      case 'in_progress': return <AlertCircle className="w-4 h-4 text-warning" />;
+      default: return <Clock className="w-4 h-4 text-muted-foreground" />;
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'pending': return 'قيد الانتظار';
+      case 'in_progress': return 'قيد المعالجة';
+      case 'completed': return 'مكتمل';
+      case 'cancelled': return 'ملغي';
+      default: return status;
+    }
+  };
+
+  const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
+    switch (status) {
+      case 'completed': return 'default';
+      case 'cancelled': return 'destructive';
+      case 'in_progress': return 'secondary';
+      default: return 'outline';
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -164,9 +225,9 @@ const AdminConsultations = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        {/* Search */}
-        <div className="mb-6">
-          <div className="relative max-w-md">
+        {/* Search and Filter */}
+        <div className="mb-6 flex flex-col sm:flex-row gap-4">
+          <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
               placeholder="البحث في طلبات الاستشارة..."
@@ -175,17 +236,32 @@ const AdminConsultations = () => {
               className="pl-10"
             />
           </div>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="فلتر حسب الحالة" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">جميع الحالات</SelectItem>
+              <SelectItem value="pending">قيد الانتظار</SelectItem>
+              <SelectItem value="in_progress">قيد المعالجة</SelectItem>
+              <SelectItem value="completed">مكتمل</SelectItem>
+              <SelectItem value="cancelled">ملغي</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Consultations Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredConsultations.map((consultation) => (
             <Card key={consultation.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex items-start justify-between">
-                  <CardTitle className="text-lg">{consultation.name}</CardTitle>
-                  <Badge className={getStatusColor(consultation.status)}>
-                    {getStatusText(consultation.status)}
+                  <CardTitle className="text-lg line-clamp-1">
+                    {consultation.name}
+                  </CardTitle>
+                  <Badge variant={getStatusVariant(consultation.status)} className="flex items-center gap-1">
+                    {getStatusIcon(consultation.status)}
+                    {getStatusLabel(consultation.status)}
                   </Badge>
                 </div>
               </CardHeader>
@@ -193,77 +269,57 @@ const AdminConsultations = () => {
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm">
                     <Mail className="w-4 h-4 text-muted-foreground" />
-                    <span>{consultation.email}</span>
+                    <span className="line-clamp-1">{consultation.email}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Phone className="w-4 h-4 text-muted-foreground" />
                     <span>{consultation.phone}</span>
                   </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <Scale className="w-4 h-4 text-muted-foreground" />
+                    <span className="line-clamp-1">{consultation.case_type}</span>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Badge variant="outline">{consultation.case_type}</Badge>
-                  {consultation.consultation_type && (
-                    <Badge variant="secondary">{consultation.consultation_type}</Badge>
-                  )}
-                </div>
-
-                {(consultation.preferred_date || consultation.preferred_time) && (
-                  <div className="space-y-2">
-                    {consultation.preferred_date && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <Calendar className="w-4 h-4 text-muted-foreground" />
-                        <span>{new Date(consultation.preferred_date).toLocaleDateString('ar-EG')}</span>
-                      </div>
-                    )}
+                {consultation.preferred_date && (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Calendar className="w-4 h-4" />
+                    <span>{new Date(consultation.preferred_date).toLocaleDateString('ar-EG')}</span>
                     {consultation.preferred_time && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <Clock className="w-4 h-4 text-muted-foreground" />
+                      <>
+                        <Clock className="w-4 h-4 mr-1" />
                         <span>{consultation.preferred_time}</span>
-                      </div>
+                      </>
                     )}
                   </div>
                 )}
 
                 {consultation.message && (
-                  <div className="p-3 bg-muted/50 rounded-lg">
-                    <div className="flex items-start gap-2">
-                      <MessageSquare className="w-4 h-4 text-muted-foreground mt-0.5" />
-                      <p className="text-sm line-clamp-3">{consultation.message}</p>
-                    </div>
+                  <div className="flex items-start gap-2 text-sm">
+                    <MessageSquare className="w-4 h-4 text-muted-foreground mt-1" />
+                    <p className="line-clamp-2 text-muted-foreground">{consultation.message}</p>
                   </div>
                 )}
 
-                <div className="text-xs text-muted-foreground">
-                  تاريخ الطلب: {new Date(consultation.created_at).toLocaleDateString('ar-EG')}
+                <div className="flex items-center justify-between pt-2 text-xs text-muted-foreground">
+                  <span>{new Date(consultation.created_at).toLocaleDateString('ar-EG')}</span>
                 </div>
 
-                <div className="flex gap-2 pt-2">
-                  {consultation.status === 'pending' && (
-                    <Button
-                      size="sm"
-                      onClick={() => updateStatus(consultation.id, 'confirmed')}
-                    >
-                      تأكيد
-                    </Button>
-                  )}
-                  {consultation.status === 'confirmed' && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => updateStatus(consultation.id, 'completed')}
-                    >
-                      إكمال
-                    </Button>
-                  )}
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => navigate(`/admin/consultations/${consultation.id}`)}
+                <div className="space-y-2">
+                  <Select
+                    value={consultation.status}
+                    onValueChange={(value) => updateConsultationStatus(consultation.id, value)}
                   >
-                    <Eye className="w-4 h-4 mr-2" />
-                    عرض
-                  </Button>
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending">قيد الانتظار</SelectItem>
+                      <SelectItem value="in_progress">قيد المعالجة</SelectItem>
+                      <SelectItem value="completed">مكتمل</SelectItem>
+                      <SelectItem value="cancelled">ملغي</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </CardContent>
             </Card>

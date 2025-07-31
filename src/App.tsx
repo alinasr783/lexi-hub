@@ -21,6 +21,10 @@ import AdminArticles from "./pages/AdminArticles";
 import AdminServices from "./pages/AdminServices";
 import AdminTeam from "./pages/AdminTeam";
 import AdminConsultations from "./pages/AdminConsultations";
+import AdminArticleForm from "./pages/AdminArticleForm";
+import AdminServiceForm from "./pages/AdminServiceForm";
+import AdminTeamForm from "./pages/AdminTeamForm";
+import AdminSiteSettings from "./pages/AdminSiteSettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -61,9 +65,16 @@ const App = () => (
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
+            <Route path="/admin/site-settings" element={<AdminSiteSettings />} />
             <Route path="/admin/articles" element={<AdminArticles />} />
+            <Route path="/admin/articles/new" element={<AdminArticleForm />} />
+            <Route path="/admin/articles/edit/:id" element={<AdminArticleForm />} />
             <Route path="/admin/services" element={<AdminServices />} />
+            <Route path="/admin/services/new" element={<AdminServiceForm />} />
+            <Route path="/admin/services/edit/:id" element={<AdminServiceForm />} />
             <Route path="/admin/team" element={<AdminTeam />} />
+            <Route path="/admin/team/new" element={<AdminTeamForm />} />
+            <Route path="/admin/team/edit/:id" element={<AdminTeamForm />} />
             <Route path="/admin/consultations" element={<AdminConsultations />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

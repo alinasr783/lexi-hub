@@ -16,7 +16,8 @@ import {
   Plus,
   Settings,
   LogOut,
-  BarChart3
+  BarChart3,
+  Palette
 } from 'lucide-react';
 
 const AdminDashboard = () => {
