@@ -40,12 +40,15 @@ const AdminDashboard = () => {
 
   const checkUser = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      // التحقق من وجود بيانات الإدمن في localStorage
+      const adminData = localStorage.getItem('admin');
+      if (!adminData) {
         navigate('/admin/login');
         return;
       }
-      setUser(user);
+      
+      const admin = JSON.parse(adminData);
+      setUser(admin);
     } catch (error) {
       navigate('/admin/login');
     } finally {
@@ -86,7 +89,8 @@ const AdminDashboard = () => {
 
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut();
+      // حذف بيانات الإدمن من localStorage
+      localStorage.removeItem('admin');
       toast({
         title: "تم تسجيل الخروج",
         description: "تم تسجيل خروجك بنجاح",
