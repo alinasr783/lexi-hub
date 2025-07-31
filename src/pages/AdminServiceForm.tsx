@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { ImageUpload } from '@/components/ui/image-upload';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { Scale, ArrowLeft, Save, Plus, X } from 'lucide-react';
 
 interface ServiceFormData {
@@ -257,15 +259,13 @@ const AdminServiceForm = () => {
                     placeholder="اسم الأيقونة من Lucide"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="image">رابط صورة الخدمة</Label>
-                  <Input
-                    id="image"
-                    value={formData.image}
-                    onChange={(e) => handleInputChange('image', e.target.value)}
-                    placeholder="https://example.com/image.jpg"
-                  />
-                </div>
+                <ImageUpload
+                  value={formData.image}
+                  onChange={(url) => handleInputChange('image', url)}
+                  bucket="service-images"
+                  folder="main"
+                  label="صورة الخدمة"
+                />
               </div>
 
               <div className="space-y-2">
@@ -287,16 +287,13 @@ const AdminServiceForm = () => {
               <CardTitle>التفاصيل الكاملة</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
-                <Label htmlFor="detailed_description">الوصف التفصيلي</Label>
-                <Textarea
-                  id="detailed_description"
-                  value={formData.detailed_description}
-                  onChange={(e) => handleInputChange('detailed_description', e.target.value)}
-                  placeholder="الوصف التفصيلي للخدمة وما تشمله..."
-                  className="min-h-[200px]"
-                />
-              </div>
+              <RichTextEditor
+                value={formData.detailed_description}
+                onChange={(content) => handleInputChange('detailed_description', content)}
+                label="الوصف التفصيلي"
+                placeholder="الوصف التفصيلي للخدمة وما تشمله..."
+                minHeight="300px"
+              />
             </CardContent>
           </Card>
 

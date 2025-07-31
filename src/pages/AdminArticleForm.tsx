@@ -9,6 +9,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ImageUpload } from '@/components/ui/image-upload';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { Scale, ArrowLeft, Save, Plus } from 'lucide-react';
 
 interface ArticleFormData {
@@ -251,15 +253,13 @@ const AdminArticleForm = () => {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="featured_image">رابط الصورة المميزة</Label>
-                <Input
-                  id="featured_image"
-                  value={formData.featured_image}
-                  onChange={(e) => handleInputChange('featured_image', e.target.value)}
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
+              <ImageUpload
+                value={formData.featured_image}
+                onChange={(url) => handleInputChange('featured_image', url)}
+                bucket="article-images"
+                folder="featured"
+                label="الصورة المميزة"
+              />
 
               <div className="space-y-2">
                 <Label htmlFor="excerpt">نبذة مختصرة *</Label>
@@ -280,17 +280,13 @@ const AdminArticleForm = () => {
               <CardTitle>محتوى المقال</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
-                <Label htmlFor="content">المحتوى *</Label>
-                <Textarea
-                  id="content"
-                  value={formData.content}
-                  onChange={(e) => handleInputChange('content', e.target.value)}
-                  placeholder="اكتب محتوى المقال هنا..."
-                  className="min-h-[400px]"
-                  required
-                />
-              </div>
+              <RichTextEditor
+                value={formData.content}
+                onChange={(content) => handleInputChange('content', content)}
+                label="المحتوى *"
+                placeholder="اكتب محتوى المقال هنا..."
+                minHeight="500px"
+              />
             </CardContent>
           </Card>
 

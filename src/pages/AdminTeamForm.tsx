@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { ImageUpload } from '@/components/ui/image-upload';
 import { Scale, ArrowLeft, Save, Plus, X } from 'lucide-react';
 
 interface TeamMemberFormData {
@@ -265,15 +266,13 @@ const AdminTeamForm = () => {
                     min="0"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="photo">رابط الصورة الشخصية</Label>
-                  <Input
-                    id="photo"
-                    value={formData.photo}
-                    onChange={(e) => handleInputChange('photo', e.target.value)}
-                    placeholder="https://example.com/photo.jpg"
-                  />
-                </div>
+                <ImageUpload
+                  value={formData.photo}
+                  onChange={(url) => handleInputChange('photo', url)}
+                  bucket="team-photos"
+                  folder="members"
+                  label="الصورة الشخصية"
+                />
               </div>
 
               <div className="space-y-2">

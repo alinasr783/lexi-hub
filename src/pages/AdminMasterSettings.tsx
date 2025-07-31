@@ -11,6 +11,8 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ImageUpload } from '@/components/ui/image-upload';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { Scale, ArrowLeft, Save, Sun, Moon, Palette, Eye, EyeOff, Plus, X, Star, MessageSquare } from 'lucide-react';
 
 interface ContactInfo {
@@ -545,26 +547,21 @@ const AdminMasterSettings = () => {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="about_image">رابط الصورة الرئيسية</Label>
-                  <Input
-                    id="about_image"
-                    value={aboutContent.image_url || ''}
-                    onChange={(e) => setAboutContent(prev => ({ ...prev, image_url: e.target.value }))}
-                    placeholder="https://example.com/image.jpg"
-                  />
-                </div>
+                <ImageUpload
+                  value={aboutContent.image_url || ''}
+                  onChange={(url) => setAboutContent(prev => ({ ...prev, image_url: url }))}
+                  bucket="general-images"
+                  folder="about"
+                  label="الصورة الرئيسية"
+                />
 
-                <div className="space-y-2">
-                  <Label htmlFor="about_content">المحتوى</Label>
-                  <Textarea
-                    id="about_content"
-                    value={aboutContent.content}
-                    onChange={(e) => setAboutContent(prev => ({ ...prev, content: e.target.value }))}
-                    placeholder="اكتب محتوى صفحة من نحن هنا..."
-                    className="min-h-[300px]"
-                  />
-                </div>
+                <RichTextEditor
+                  value={aboutContent.content}
+                  onChange={(content) => setAboutContent(prev => ({ ...prev, content }))}
+                  label="المحتوى"
+                  placeholder="اكتب محتوى صفحة من نحن هنا..."
+                  minHeight="400px"
+                />
 
                 <div className="space-y-2">
                   <Label htmlFor="about_meta">وصف الصفحة لمحركات البحث</Label>
