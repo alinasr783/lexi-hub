@@ -48,15 +48,15 @@ const ScrollToTop = () => {
   return null;
 };
 
-// Component to conditionally render routes based on settings
-const ConditionalRoute = ({ path, element, settingKey }: { path: string; element: React.ReactElement; settingKey?: keyof SiteSettings }) => {
+// Component to conditionally render content based on settings
+const ConditionalElement = ({ element, settingKey }: { element: React.ReactElement; settingKey?: keyof SiteSettings }) => {
   const { settings } = useSiteSettings();
   
   if (settingKey && !settings[settingKey]) {
-    return <Route path={path} element={<NotFound />} />;
+    return <NotFound />;
   }
   
-  return <Route path={path} element={element} />;
+  return element;
 };
 
 const App = () => (
@@ -68,15 +68,15 @@ const App = () => (
         <BrowserRouter>
           <ScrollToTop />
           <Routes>
-            <ConditionalRoute path="/" element={<Index />} settingKey="showHomePage" />
-            <ConditionalRoute path="/services" element={<Services />} settingKey="showServicesPage" />
+            <Route path="/" element={<ConditionalElement element={<Index />} settingKey="showHomePage" />} />
+            <Route path="/services" element={<ConditionalElement element={<Services />} settingKey="showServicesPage" />} />
             <Route path="/services/:slug" element={<ServiceDetail />} />
-            <ConditionalRoute path="/team" element={<Team />} settingKey="showTeamPage" />
-            <ConditionalRoute path="/articles" element={<Articles />} settingKey="showArticlesPage" />
+            <Route path="/team" element={<ConditionalElement element={<Team />} settingKey="showTeamPage" />} />
+            <Route path="/articles" element={<ConditionalElement element={<Articles />} settingKey="showArticlesPage" />} />
             <Route path="/articles/:slug" element={<ArticleDetail />} />
-            <ConditionalRoute path="/contact" element={<Contact />} settingKey="showContactPage" />
-            <ConditionalRoute path="/about" element={<About />} settingKey="showAboutPage" />
-            <ConditionalRoute path="/consultation" element={<Consultation />} settingKey="showConsultationPage" />
+            <Route path="/contact" element={<ConditionalElement element={<Contact />} settingKey="showContactPage" />} />
+            <Route path="/about" element={<ConditionalElement element={<About />} settingKey="showAboutPage" />} />
+            <Route path="/consultation" element={<ConditionalElement element={<Consultation />} settingKey="showConsultationPage" />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/settings" element={<AdminMasterSettings />} />
