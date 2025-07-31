@@ -25,6 +25,7 @@ import AdminArticleForm from "./pages/AdminArticleForm";
 import AdminServiceForm from "./pages/AdminServiceForm";
 import AdminTeamForm from "./pages/AdminTeamForm";
 import AdminSiteSettings from "./pages/AdminSiteSettings";
+import AdminMasterSettings from "./pages/AdminMasterSettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -64,7 +65,7 @@ const App = () => (
             <Route path="/consultation" element={<Consultation />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/settings" element={<AdminSettings />} />
+            <Route path="/admin/settings" element={<AdminMasterSettings />} />
             <Route path="/admin/site-settings" element={<AdminSiteSettings />} />
             <Route path="/admin/articles" element={<AdminArticles />} />
             <Route path="/admin/articles/new" element={<AdminArticleForm />} />

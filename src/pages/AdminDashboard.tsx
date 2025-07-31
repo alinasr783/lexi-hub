@@ -315,7 +315,7 @@ const AdminDashboard = () => {
                   <p className="text-sm text-muted-foreground">
                     إدارة معلومات التواصل والإعدادات العامة
                   </p>
-                  <Button variant="outline" size="sm" onClick={() => navigate('/admin/settings')}>
+                  <Button variant="outline" size="sm" onClick={() => navigate('/admin/site-settings')}>
                     تعديل الإعدادات
                   </Button>
                 </CardContent>
