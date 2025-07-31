@@ -30,34 +30,34 @@ export const WhatsAppButton = ({
   if (!contactInfo?.whatsapp) return null;
 
   return (
-    <button
-      onClick={handleClick}
-      className={`
-        fixed bottom-6 right-6 z-50
-        bg-gradient-to-r from-green-500 to-green-600
-        hover:from-green-600 hover:to-green-700
-        text-white rounded-full p-4 
-        shadow-2xl hover:shadow-green-500/25
-        transform hover:scale-110 
-        transition-all duration-500 ease-out
-        backdrop-blur-sm border border-green-400/20
-        group relative overflow-hidden
-        ${className}
-      `}
-      aria-label="تواصل عبر الواتساب"
-    >
-      {/* Background glow effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-green-600/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-500"></div>
-      
-      {/* Icon */}
-      <MessageCircle className="w-6 h-6 relative z-10 group-hover:rotate-12 transition-transform duration-300" />
-      
-      {/* Pulse ring */}
-      <span className="absolute inset-0 rounded-full bg-green-400 opacity-75 animate-ping"></span>
-      <span className="absolute inset-0 rounded-full bg-green-400 opacity-50 animate-pulse"></span>
-      
-      {/* Notification dot */}
-      <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full w-3 h-3 animate-bounce shadow-lg"></span>
-    </button>
+    <div className={`fixed bottom-6 right-6 z-50 ${className}`}>
+      <button
+        onClick={handleClick}
+        className="
+          bg-gradient-to-r from-green-500 to-green-600
+          hover:from-green-600 hover:to-green-700
+          text-white rounded-full p-4 
+          shadow-2xl hover:shadow-green-500/25
+          transform hover:scale-110 
+          transition-all duration-500 ease-out
+          backdrop-blur-sm border border-green-400/20
+          group relative overflow-hidden
+        "
+        aria-label="تواصل عبر الواتساب"
+      >
+        {/* Background glow effect */}
+        <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-green-600/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-500"></div>
+        
+        {/* Icon */}
+        <MessageCircle className="w-6 h-6 relative z-10 group-hover:rotate-12 transition-transform duration-300" />
+        
+        {/* Pulse ring */}
+        <span className="absolute inset-0 rounded-full bg-green-400 opacity-75 animate-ping"></span>
+        <span className="absolute inset-0 rounded-full bg-green-400 opacity-50 animate-pulse"></span>
+        
+        {/* Notification dot */}
+        <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full w-3 h-3 animate-bounce shadow-lg"></span>
+      </button>
+    </div>
   );
 };
