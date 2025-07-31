@@ -72,15 +72,15 @@ const Consultation = () => {
   ];
 
   const timeSlots = [
-    '09:00 ص',
-    '10:00 ص',
-    '11:00 ص',
-    '12:00 م',
-    '01:00 م',
-    '02:00 م',
-    '03:00 م',
-    '04:00 م',
-    '05:00 م'
+    '09:00',
+    '10:00', 
+    '11:00',
+    '12:00',
+    '13:00',
+    '14:00',
+    '15:00',
+    '16:00',
+    '17:00'
   ];
 
   const handleTypeSelection = (typeId) => {
@@ -113,6 +113,8 @@ const Consultation = () => {
     }
 
     try {
+      console.log('إرسال البيانات:', formData);
+      
       const { error } = await supabase.from('consultation_bookings').insert([
         {
           name: formData.name,
@@ -126,7 +128,10 @@ const Consultation = () => {
         }
       ]);
 
-      if (error) throw error;
+      if (error) {
+        console.error('خطأ في الإرسال:', error);
+        throw error;
+      }
 
       toast({
         title: "تم إرسال الطلب بنجاح",
@@ -149,6 +154,7 @@ const Consultation = () => {
       setSelectedType('');
 
     } catch (error) {
+      console.error('خطأ في الطلب:', error);
       toast({
         title: "خطأ",
         description: "حدث خطأ أثناء إرسال الطلب. يرجى المحاولة مرة أخرى",
@@ -356,7 +362,7 @@ const Consultation = () => {
                           <SelectContent>
                             {timeSlots.map((time, index) => (
                               <SelectItem key={index} value={time}>
-                                {time}
+                                {time.includes(':') ? `${time.split(':')[0]}:${time.split(':')[1]} ${parseInt(time.split(':')[0]) < 12 ? 'ص' : 'م'}` : time}
                               </SelectItem>
                             ))}
                           </SelectContent>

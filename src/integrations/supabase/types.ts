@@ -94,10 +94,10 @@ export type Database = {
           case_type: string | null
           consultation_type: string | null
           created_at: string | null
-          email: string
+          email: string | null
           id: string
           message: string | null
-          name: string
+          name: string | null
           phone: string | null
           preferred_date: string | null
           preferred_time: string | null
@@ -107,10 +107,10 @@ export type Database = {
           case_type?: string | null
           consultation_type?: string | null
           created_at?: string | null
-          email: string
+          email?: string | null
           id?: string
           message?: string | null
-          name: string
+          name?: string | null
           phone?: string | null
           preferred_date?: string | null
           preferred_time?: string | null
@@ -120,10 +120,10 @@ export type Database = {
           case_type?: string | null
           consultation_type?: string | null
           created_at?: string | null
-          email?: string
+          email?: string | null
           id?: string
           message?: string | null
-          name?: string
+          name?: string | null
           phone?: string | null
           preferred_date?: string | null
           preferred_time?: string | null
