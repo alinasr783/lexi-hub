@@ -121,15 +121,16 @@ const AdminContact = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="site_name">اسم الموقع</Label>
-                <Input
-                  id="site_name"
-                  value={formData.site_name}
-                  onChange={(e) => handleInputChange('site_name', e.target.value)}
-                  placeholder="اسم الموقع أو المكتب"
-                />
-              </div>
+                <div>
+                  <Label htmlFor="site_name">اسم الموقع *</Label>
+                  <Input
+                    id="site_name"
+                    value={formData.site_name}
+                    onChange={(e) => handleInputChange('site_name', e.target.value)}
+                    placeholder="اسم الموقع أو المكتب"
+                    required
+                  />
+                </div>
             </CardContent>
           </Card>
 

@@ -46,10 +46,30 @@ export const useContactInfo = () => {
 
   const updateContactInfo = async (updates: Partial<ContactInfo>) => {
     try {
+      // If no contact info exists, create new record
+      if (!contactInfo) {
+        const { data, error } = await supabase
+          .from('contact_info')
+          .insert({
+            site_name: updates.site_name || '',
+            phone: updates.phone || '',
+            email: updates.email || '',
+            address: updates.address || '',
+            ...updates
+          })
+          .select()
+          .single();
+
+        if (error) throw error;
+        setContactInfo(data as ContactInfo);
+        return { success: true };
+      }
+
+      // Update existing record
       const { data, error } = await supabase
         .from('contact_info')
         .update(updates)
-        .eq('id', contactInfo?.id)
+        .eq('id', contactInfo.id)
         .select()
         .single();
 
@@ -57,7 +77,8 @@ export const useContactInfo = () => {
       setContactInfo(data as ContactInfo);
       return { success: true };
     } catch (err) {
-      return { success: false, error: err.message };
+      console.error('Update contact info error:', err);
+      return { success: false, error: err?.message || 'حدث خطأ غير متوقع' };
     }
   };
 

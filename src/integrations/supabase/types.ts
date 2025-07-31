@@ -166,40 +166,40 @@ export type Database = {
       }
       contact_info: {
         Row: {
-          address: string
-          email: string
+          address: string | null
+          email: string | null
           facebook: string | null
           id: string
           linkedin: string | null
           map_embed: string | null
           office_hours: string | null
-          phone: string
+          phone: string | null
           twitter: string | null
           updated_at: string
           whatsapp: string | null
         }
         Insert: {
-          address: string
-          email: string
+          address?: string | null
+          email?: string | null
           facebook?: string | null
           id?: string
           linkedin?: string | null
           map_embed?: string | null
           office_hours?: string | null
-          phone: string
+          phone?: string | null
           twitter?: string | null
           updated_at?: string
           whatsapp?: string | null
         }
         Update: {
-          address?: string
-          email?: string
+          address?: string | null
+          email?: string | null
           facebook?: string | null
           id?: string
           linkedin?: string | null
           map_embed?: string | null
           office_hours?: string | null
-          phone?: string
+          phone?: string | null
           twitter?: string | null
           updated_at?: string
           whatsapp?: string | null
