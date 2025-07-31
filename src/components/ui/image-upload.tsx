@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 interface ImageUploadProps {
   value: string;
   onChange: (url: string) => void;
-  bucket: string;
+  bucket?: string;
   folder?: string;
   label?: string;
   className?: string;
@@ -21,7 +21,7 @@ interface ImageUploadProps {
 const ImageUpload = ({
   value,
   onChange,
-  bucket,
+  bucket = 'images',
   folder = '',
   label = 'الصورة',
   className,
