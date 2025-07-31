@@ -17,7 +17,8 @@ import {
   Settings,
   LogOut,
   BarChart3,
-  Palette
+  Palette,
+  Star
 } from 'lucide-react';
 
 const AdminDashboard = () => {
@@ -27,7 +28,8 @@ const AdminDashboard = () => {
     totalArticles: 0,
     totalServices: 0,
     totalTeamMembers: 0,
-    totalConsultations: 0
+    totalConsultations: 0,
+    totalTestimonials: 0
   });
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -61,19 +63,22 @@ const AdminDashboard = () => {
         { count: articlesCount },
         { count: servicesCount },
         { count: teamCount },
-        { count: consultationsCount }
+        { count: consultationsCount },
+        { count: testimonialsCount }
       ] = await Promise.all([
         supabase.from('articles').select('*', { count: 'exact', head: true }),
         supabase.from('services').select('*', { count: 'exact', head: true }),
         supabase.from('team_members').select('*', { count: 'exact', head: true }),
-        supabase.from('consultation_bookings').select('*', { count: 'exact', head: true })
+        supabase.from('consultation_bookings').select('*', { count: 'exact', head: true }),
+        supabase.from('testimonials').select('*', { count: 'exact', head: true })
       ]);
 
       setStats({
         totalArticles: articlesCount || 0,
         totalServices: servicesCount || 0,
         totalTeamMembers: teamCount || 0,
-        totalConsultations: consultationsCount || 0
+        totalConsultations: consultationsCount || 0,
+        totalTestimonials: testimonialsCount || 0
       });
     } catch (error) {
       console.error('Error loading stats:', error);
@@ -278,6 +283,29 @@ const AdminDashboard = () => {
                     </Button>
                     <Button variant="outline" size="sm" onClick={() => navigate('/admin/team')}>
                       عرض الكل
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Star className="w-5 h-5" />
+                    آراء العملاء
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    إدارة آراء وتقييمات العملاء
+                  </p>
+                  <div className="flex gap-2">
+                    <Button size="sm" className="btn-secondary" onClick={() => navigate('/admin/testimonials/new')}>
+                      <Plus className="w-4 h-4 mr-2" />
+                      إضافة رأي
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => navigate('/admin/testimonials')}>
+                      عرض الكل ({stats.totalTestimonials})
                     </Button>
                   </div>
                 </CardContent>
