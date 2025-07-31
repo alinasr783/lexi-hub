@@ -22,13 +22,14 @@ const AdminLogin = () => {
 
     try {
       // التحقق من جدول admins بدلاً من auth
-      const { data: admin, error } = await supabase
+      const { data: admins, error } = await supabase
         .from('admins')
         .select('*')
         .eq('email', email)
         .eq('password', password)
-        .eq('is_active', true)
-        .single();
+        .eq('is_active', true);
+
+      const admin = admins && admins.length > 0 ? admins[0] : null;
 
       if (error || !admin) {
         toast({
