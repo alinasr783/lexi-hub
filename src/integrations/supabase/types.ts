@@ -131,6 +131,36 @@ export type Database = {
         }
         Relationships: []
       }
+      consultation_page_settings: {
+        Row: {
+          case_types: Json
+          consultation_types: Json
+          hero_description: string
+          hero_title: string
+          id: string
+          time_slots: Json
+          updated_at: string
+        }
+        Insert: {
+          case_types?: Json
+          consultation_types?: Json
+          hero_description?: string
+          hero_title?: string
+          id?: string
+          time_slots?: Json
+          updated_at?: string
+        }
+        Update: {
+          case_types?: Json
+          consultation_types?: Json
+          hero_description?: string
+          hero_title?: string
+          id?: string
+          time_slots?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contact_forms: {
         Row: {
           created_at: string | null
@@ -167,6 +197,7 @@ export type Database = {
       contact_info: {
         Row: {
           address: string | null
+          address_link: string | null
           email: string | null
           facebook: string | null
           id: string
@@ -180,6 +211,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          address_link?: string | null
           email?: string | null
           facebook?: string | null
           id?: string
@@ -193,6 +225,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          address_link?: string | null
           email?: string | null
           facebook?: string | null
           id?: string
