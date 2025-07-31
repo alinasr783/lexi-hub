@@ -27,6 +27,8 @@ import AdminServiceForm from "./pages/AdminServiceForm";
 import AdminTeamForm from "./pages/AdminTeamForm";
 import AdminSiteSettings from "./pages/AdminSiteSettings";
 import AdminMasterSettings from "./pages/AdminMasterSettings";
+import AdminTestimonials from "./pages/AdminTestimonials";
+import AdminTestimonialForm from "./pages/AdminTestimonialForm";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -88,6 +90,9 @@ const App = () => (
             <Route path="/admin/team" element={<AdminTeam />} />
             <Route path="/admin/team/new" element={<AdminTeamForm />} />
             <Route path="/admin/team/edit/:id" element={<AdminTeamForm />} />
+            <Route path="/admin/testimonials" element={<AdminTestimonials />} />
+            <Route path="/admin/testimonials/new" element={<AdminTestimonialForm />} />
+            <Route path="/admin/testimonials/:id/edit" element={<AdminTestimonialForm />} />
             <Route path="/admin/consultations" element={<AdminConsultations />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

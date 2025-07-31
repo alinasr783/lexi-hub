@@ -1,41 +1,53 @@
 import { Scale, Users, FileText, Gavel, Shield, Building } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+
+const iconMap = {
+  Scale, Users, FileText, Gavel, Shield, Building
+};
 
 export const ServicesSection = () => {
   const { t } = useLanguage();
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const services = [
-    {
-      icon: Scale,
-      titleKey: 'legalConsultations',
-      descKey: 'legalConsultationsDesc'
-    },
-    {
-      icon: Building,
-      titleKey: 'commercialCases', 
-      descKey: 'commercialCasesDesc'
-    },
-    {
-      icon: Users,
-      titleKey: 'personalStatus',
-      descKey: 'personalStatusDesc'
-    },
-    {
-      icon: FileText,
-      titleKey: 'legalConsultations',
-      descKey: 'legalConsultationsDesc'
-    },
-    {
-      icon: Gavel,
-      titleKey: 'commercialCases',
-      descKey: 'commercialCasesDesc'
-    },
-    {
-      icon: Shield,
-      titleKey: 'personalStatus', 
-      descKey: 'personalStatusDesc'
+  useEffect(() => {
+    loadServices();
+  }, []);
+
+  const loadServices = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('services')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(6);
+
+      if (error) throw error;
+      setServices(data || []);
+    } catch (error) {
+      console.error('Error loading services:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  if (loading) {
+    return (
+      <section className="py-20 bg-gradient-subtle">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (services.length === 0) {
+    return null;
+  }
 
   return (
     <section className="py-20 bg-gradient-subtle">
@@ -46,15 +58,15 @@ export const ServicesSection = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service, index) => {
-            const Icon = service.icon;
+          {services.map((service) => {
+            const IconComponent = iconMap[service.icon] || Scale;
             return (
-              <div key={index} className="card-elegant group cursor-pointer">
+              <div key={service.id} className="card-elegant group cursor-pointer">
                 <div className="flex items-center justify-center w-16 h-16 bg-gradient-primary rounded-2xl mb-6 mx-auto group-hover:scale-110 transition-smooth">
-                  <Icon className="w-8 h-8 text-primary-foreground" />
+                  <IconComponent className="w-8 h-8 text-primary-foreground" />
                 </div>
-                <h3 className="text-2xl font-semibold mb-4 text-center">{t(service.titleKey)}</h3>
-                <p className="text-muted-foreground text-center leading-relaxed">{t(service.descKey)}</p>
+                <h3 className="text-2xl font-semibold mb-4 text-center">{service.title}</h3>
+                <p className="text-muted-foreground text-center leading-relaxed">{service.description}</p>
               </div>
             );
           })}

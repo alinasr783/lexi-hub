@@ -1,33 +1,48 @@
 import { useLanguage } from '@/hooks/useLanguage';
 import { Star, Quote } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 export const TestimonialsSection = () => {
   const { t } = useLanguage();
+  const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Placeholder testimonials data - will be dynamic from Supabase later
-  const testimonials = [
-    {
-      name: 'سعد المحمدي',
-      caseType: 'قضية تجارية',
-      rating: 5,
-      comment: 'خدمة ممتازة وفريق محترف جداً. تم حل قضيتي بأفضل النتائج المتوقعة وبوقت قياسي.',
-      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=face'
-    },
-    {
-      name: 'نورا أحمد',
-      caseType: 'قضية أحوال شخصية', 
-      rating: 5,
-      comment: 'التعامل كان في غاية الاحترافية والسرية. المحامية كانت متفهمة جداً وساعدتني كثيراً.',
-      image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face'
-    },
-    {
-      name: 'خالد العتيبي',
-      caseType: 'استشارة قانونية',
-      rating: 5,
-      comment: 'استشارة قانونية شاملة ومفصلة. الفريق مبدع في تبسيط المعلومات القانونية المعقدة.',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face'
+  useEffect(() => {
+    loadTestimonials();
+  }, []);
+
+  const loadTestimonials = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('testimonials')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setTestimonials(data || []);
+    } catch (error) {
+      console.error('Error loading testimonials:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  if (loading) {
+    return (
+      <section className="py-20 bg-gradient-subtle">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (testimonials.length === 0) {
+    return null;
+  }
 
   return (
     <section className="py-20 bg-gradient-subtle">
@@ -38,29 +53,31 @@ export const TestimonialsSection = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <div key={index} className="card-elegant relative">
+          {testimonials.map((testimonial) => (
+            <div key={testimonial.id} className="card-elegant relative">
               <Quote className="w-8 h-8 text-accent/30 absolute top-4 right-4" />
               
               <div className="flex items-center mb-4">
-                <img 
-                  src={testimonial.image} 
-                  alt={testimonial.name}
-                  className="w-12 h-12 rounded-full object-cover mr-4"
-                />
+                <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mr-4">
+                  <span className="text-lg font-semibold text-accent">
+                    {testimonial.is_anonymous ? '؟' : testimonial.client_name.charAt(0)}
+                  </span>
+                </div>
                 <div>
-                  <h4 className="font-semibold">{testimonial.name}</h4>
-                  <p className="text-sm text-muted-foreground">{testimonial.caseType}</p>
+                  <h4 className="font-semibold">
+                    {testimonial.is_anonymous ? 'عميل مجهول' : testimonial.client_name}
+                  </h4>
+                  <p className="text-sm text-muted-foreground">{testimonial.case_type}</p>
                 </div>
               </div>
               
               <div className="flex mb-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
+                {[...Array(testimonial.rating || 5)].map((_, i) => (
                   <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
                 ))}
               </div>
               
-              <p className="text-muted-foreground leading-relaxed">{testimonial.comment}</p>
+              <p className="text-muted-foreground leading-relaxed">{testimonial.testimonial}</p>
             </div>
           ))}
         </div>

@@ -1,37 +1,51 @@
 import { useLanguage } from '@/hooks/useLanguage';
 import { Calendar, User, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 export const ArticlesSection = () => {
   const { language, t } = useLanguage();
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Placeholder articles data - will be dynamic from Supabase later
-  const articles = [
-    {
-      title: 'حقوق العمال في القانون السعودي الجديد',
-      excerpt: 'دليل شامل حول حقوق العمال والتحديثات الأخيرة في نظام العمل السعودي...',
-      author: 'أحمد محمد علي',
-      date: '2024-01-15',
-      image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&h=400&fit=crop',
-      slug: 'workers-rights-saudi-law'
-    },
-    {
-      title: 'إجراءات تأسيس الشركات التجارية',
-      excerpt: 'خطوات مفصلة لتأسيس الشركات التجارية في المملكة العربية السعودية...',
-      author: 'فاطمة الزهراء',
-      date: '2024-01-10',
-      image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&h=400&fit=crop',
-      slug: 'company-establishment-procedures'
-    },
-    {
-      title: 'قوانين الحضانة وحقوق الأطفال',
-      excerpt: 'شرح مفصل لقوانين الحضانة وكيفية حماية حقوق الأطفال في القضايا الأسرية...',
-      author: 'محمد عبدالرحمن',
-      date: '2024-01-05',
-      image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=600&h=400&fit=crop',
-      slug: 'custody-children-rights'
+  useEffect(() => {
+    loadArticles();
+  }, []);
+
+  const loadArticles = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('articles')
+        .select('*')
+        .eq('published', true)
+        .order('created_at', { ascending: false })
+        .limit(3);
+
+      if (error) throw error;
+      setArticles(data || []);
+    } catch (error) {
+      console.error('Error loading articles:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  if (loading) {
+    return (
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (articles.length === 0) {
+    return null;
+  }
 
   return (
     <section className="py-20 bg-background">
@@ -42,24 +56,30 @@ export const ArticlesSection = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {articles.map((article, index) => (
-            <article key={index} className="card-elegant group cursor-pointer">
+          {articles.map((article) => (
+            <article key={article.id} className="card-elegant group cursor-pointer">
               <div className="relative mb-6 overflow-hidden rounded-lg">
-                <img 
-                  src={article.image} 
-                  alt={article.title}
-                  className="w-full h-48 object-cover group-hover:scale-105 transition-smooth"
-                />
+                {article.featured_image ? (
+                  <img 
+                    src={article.featured_image} 
+                    alt={article.title}
+                    className="w-full h-48 object-cover group-hover:scale-105 transition-smooth"
+                  />
+                ) : (
+                  <div className="w-full h-48 bg-accent/10 flex items-center justify-center">
+                    <span className="text-4xl">📄</span>
+                  </div>
+                )}
               </div>
               
               <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
                 <div className="flex items-center gap-1">
                   <User className="w-4 h-4" />
-                  <span>{article.author}</span>
+                  <span>{article.author_name}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
-                  <span>{article.date}</span>
+                  <span>{new Date(article.created_at).toLocaleDateString('ar-SA')}</span>
                 </div>
               </div>
               
