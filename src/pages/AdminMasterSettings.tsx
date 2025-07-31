@@ -59,12 +59,40 @@ interface SiteSettings {
   showAboutPage: boolean;
   showConsultationPage: boolean;
   
-  // Section visibility
+  // Homepage sections
   showHeroSection: boolean;
   showServicesSection: boolean;
   showTeamSection: boolean;
   showTestimonialsSection: boolean;
   showArticlesSection: boolean;
+  
+  // Services page sections
+  showServicesHero: boolean;
+  showServicesList: boolean;
+  showServicesContact: boolean;
+  
+  // Team page sections
+  showTeamHero: boolean;
+  showTeamMembers: boolean;
+  showTeamContact: boolean;
+  
+  // Articles page sections
+  showArticlesHero: boolean;
+  showArticlesSearch: boolean;
+  showArticlesFilters: boolean;
+  showArticlesList: boolean;
+  
+  // Contact page sections
+  showContactHero: boolean;
+  showContactForm: boolean;
+  showContactInfo: boolean;
+  showContactMap: boolean;
+  
+  // About page sections
+  showAboutHero: boolean;
+  showAboutContent: boolean;
+  showAboutTeam: boolean;
+  showAboutContact: boolean;
   
   // Site info
   siteName: string;
@@ -136,6 +164,29 @@ const AdminMasterSettings = () => {
     showTeamSection: true,
     showTestimonialsSection: true,
     showArticlesSection: true,
+    // Services page sections
+    showServicesHero: true,
+    showServicesList: true,
+    showServicesContact: true,
+    // Team page sections
+    showTeamHero: true,
+    showTeamMembers: true,
+    showTeamContact: true,
+    // Articles page sections
+    showArticlesHero: true,
+    showArticlesSearch: true,
+    showArticlesFilters: true,
+    showArticlesList: true,
+    // Contact page sections
+    showContactHero: true,
+    showContactForm: true,
+    showContactInfo: true,
+    showContactMap: true,
+    // About page sections
+    showAboutHero: true,
+    showAboutContent: true,
+    showAboutTeam: true,
+    showAboutContact: true,
     siteName: 'ليكسي هاب',
     siteDescription: 'مكتب محاماة متخصص في تقديم الاستشارات القانونية',
     maintenanceMode: false
@@ -364,12 +415,13 @@ const AdminMasterSettings = () => {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-6xl mx-auto">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="contact">بيانات التواصل</TabsTrigger>
             <TabsTrigger value="about">صفحة من نحن</TabsTrigger>
             <TabsTrigger value="testimonials">آراء العملاء</TabsTrigger>
             <TabsTrigger value="theme">الثيم والألوان</TabsTrigger>
-            <TabsTrigger value="visibility">إظهار/إخفاء</TabsTrigger>
+            <TabsTrigger value="visibility">إظهار الصفحات</TabsTrigger>
+            <TabsTrigger value="sections">إظهار الأقسام</TabsTrigger>
           </TabsList>
 
           {/* Contact Info Tab */}
@@ -770,8 +822,8 @@ const AdminMasterSettings = () => {
                     { key: 'showAboutPage', label: 'صفحة عن المكتب' },
                     { key: 'showConsultationPage', label: 'صفحة الاستشارات' },
                   ].map((page) => (
-                    <div key={page.key} className="flex items-center justify-between">
-                      <Label htmlFor={page.key}>{page.label}</Label>
+                    <div key={page.key} className="flex items-center justify-between p-3 border rounded-lg">
+                      <Label htmlFor={page.key} className="font-medium">{page.label}</Label>
                       <Switch
                         id={page.key}
                         checked={settings[page.key as keyof SiteSettings] as boolean}
@@ -782,7 +834,10 @@ const AdminMasterSettings = () => {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
 
+          {/* New Sections Tab */}
+          <TabsContent value="sections" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -799,8 +854,131 @@ const AdminMasterSettings = () => {
                     { key: 'showTestimonialsSection', label: 'قسم آراء العملاء' },
                     { key: 'showArticlesSection', label: 'قسم المقالات' },
                   ].map((section) => (
-                    <div key={section.key} className="flex items-center justify-between">
-                      <Label htmlFor={section.key}>{section.label}</Label>
+                    <div key={section.key} className="flex items-center justify-between p-3 border rounded-lg">
+                      <Label htmlFor={section.key} className="font-medium">{section.label}</Label>
+                      <Switch
+                        id={section.key}
+                        checked={settings[section.key as keyof SiteSettings] as boolean}
+                        onCheckedChange={(checked) => setSettings(prev => ({ ...prev, [section.key]: checked }))}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>أقسام صفحة الخدمات</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    { key: 'showServicesHero', label: 'القسم الرئيسي' },
+                    { key: 'showServicesList', label: 'قائمة الخدمات' },
+                    { key: 'showServicesContact', label: 'قسم التواصل' },
+                  ].map((section) => (
+                    <div key={section.key} className="flex items-center justify-between p-3 border rounded-lg">
+                      <Label htmlFor={section.key} className="font-medium">{section.label}</Label>
+                      <Switch
+                        id={section.key}
+                        checked={settings[section.key as keyof SiteSettings] as boolean}
+                        onCheckedChange={(checked) => setSettings(prev => ({ ...prev, [section.key]: checked }))}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>أقسام صفحة الفريق</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    { key: 'showTeamHero', label: 'القسم الرئيسي' },
+                    { key: 'showTeamMembers', label: 'أعضاء الفريق' },
+                    { key: 'showTeamContact', label: 'قسم التواصل' },
+                  ].map((section) => (
+                    <div key={section.key} className="flex items-center justify-between p-3 border rounded-lg">
+                      <Label htmlFor={section.key} className="font-medium">{section.label}</Label>
+                      <Switch
+                        id={section.key}
+                        checked={settings[section.key as keyof SiteSettings] as boolean}
+                        onCheckedChange={(checked) => setSettings(prev => ({ ...prev, [section.key]: checked }))}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>أقسام صفحة المقالات</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    { key: 'showArticlesHero', label: 'القسم الرئيسي' },
+                    { key: 'showArticlesSearch', label: 'البحث' },
+                    { key: 'showArticlesFilters', label: 'الفلاتر' },
+                    { key: 'showArticlesList', label: 'قائمة المقالات' },
+                  ].map((section) => (
+                    <div key={section.key} className="flex items-center justify-between p-3 border rounded-lg">
+                      <Label htmlFor={section.key} className="font-medium">{section.label}</Label>
+                      <Switch
+                        id={section.key}
+                        checked={settings[section.key as keyof SiteSettings] as boolean}
+                        onCheckedChange={(checked) => setSettings(prev => ({ ...prev, [section.key]: checked }))}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>أقسام صفحة التواصل</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    { key: 'showContactHero', label: 'القسم الرئيسي' },
+                    { key: 'showContactForm', label: 'نموذج التواصل' },
+                    { key: 'showContactInfo', label: 'معلومات التواصل' },
+                    { key: 'showContactMap', label: 'الخريطة' },
+                  ].map((section) => (
+                    <div key={section.key} className="flex items-center justify-between p-3 border rounded-lg">
+                      <Label htmlFor={section.key} className="font-medium">{section.label}</Label>
+                      <Switch
+                        id={section.key}
+                        checked={settings[section.key as keyof SiteSettings] as boolean}
+                        onCheckedChange={(checked) => setSettings(prev => ({ ...prev, [section.key]: checked }))}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>أقسام صفحة من نحن</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    { key: 'showAboutHero', label: 'القسم الرئيسي' },
+                    { key: 'showAboutContent', label: 'المحتوى الرئيسي' },
+                    { key: 'showAboutTeam', label: 'قسم الفريق' },
+                    { key: 'showAboutContact', label: 'قسم التواصل' },
+                  ].map((section) => (
+                    <div key={section.key} className="flex items-center justify-between p-3 border rounded-lg">
+                      <Label htmlFor={section.key} className="font-medium">{section.label}</Label>
                       <Switch
                         id={section.key}
                         checked={settings[section.key as keyof SiteSettings] as boolean}

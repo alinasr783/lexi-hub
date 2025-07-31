@@ -1,77 +1,152 @@
+import { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { useLanguage } from '@/hooks/useLanguage';
-import { Calendar, User, ArrowLeft, ArrowRight, Search } from 'lucide-react';
+import { Calendar, User, ArrowLeft, ArrowRight, Search, Filter, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+
+interface Article {
+  id: string;
+  title: string;
+  excerpt: string;
+  author_name: string;
+  created_at: string;
+  category: string;
+  featured_image?: string;
+  slug: string;
+  published: boolean;
+  content: string;
+}
 
 const Articles = () => {
   const { language } = useLanguage();
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [sortBy, setSortBy] = useState('newest');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [articlesPerPage] = useState(6);
 
-  const articles = [
-    {
-      title: 'حقوق العمال في القانون السعودي الجديد',
-      excerpt: 'دليل شامل حول حقوق العمال والتحديثات الأخيرة في نظام العمل السعودي وما يترتب عليها من حقوق وواجبات لأطراف علاقة العمل...',
-      author: 'أحمد محمد علي',
-      date: '2024-01-15',
-      category: 'قانون العمل',
-      image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&h=400&fit=crop',
-      slug: 'workers-rights-saudi-law',
-      readTime: '8 دقائق'
-    },
-    {
-      title: 'إجراءات تأسيس الشركات التجارية في السعودية',
-      excerpt: 'خطوات مفصلة لتأسيس الشركات التجارية في المملكة العربية السعودية، والوثائق المطلوبة، والرسوم، والمدة الزمنية اللازمة...',
-      author: 'فاطمة الزهراء',
-      date: '2024-01-10',
-      category: 'القانون التجاري',
-      image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&h=400&fit=crop',
-      slug: 'company-establishment-procedures',
-      readTime: '12 دقيقة'
-    },
-    {
-      title: 'قوانين الحضانة وحقوق الأطفال في الأحوال الشخصية',
-      excerpt: 'شرح مفصل لقوانين الحضانة وكيفية حماية حقوق الأطفال في القضايا الأسرية، والعوامل التي تؤثر على قرارات المحكمة...',
-      author: 'محمد عبدالرحمن',
-      date: '2024-01-05',
-      category: 'الأحوال الشخصية',
-      image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=600&h=400&fit=crop',
-      slug: 'custody-children-rights',
-      readTime: '10 دقائق'
-    },
-    {
-      title: 'النظام الجديد لحماية البيانات الشخصية',
-      excerpt: 'تحليل شامل للنظام السعودي لحماية البيانات الشخصية وتأثيره على الشركات والأفراد، والالتزامات القانونية الجديدة...',
-      author: 'أحمد محمد علي',
-      date: '2023-12-28',
-      category: 'قانون التقنية',
-      image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&h=400&fit=crop',
-      slug: 'data-protection-law',
-      readTime: '15 دقيقة'
-    },
-    {
-      title: 'حقوق المستهلك في التجارة الإلكترونية',
-      excerpt: 'دليل شامل لحقوق المستهلك في التجارة الإلكترونية، وآليات الحماية المتاحة، وإجراءات الشكوى والاسترداد...',
-      author: 'فاطمة الزهراء',
-      date: '2023-12-20',
-      category: 'حماية المستهلك',
-      image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop',
-      slug: 'consumer-rights-ecommerce',
-      readTime: '9 دقائق'
-    },
-    {
-      title: 'النزاعات العقارية وطرق حلها',
-      excerpt: 'أنواع النزاعات العقارية الشائعة في السعودية وطرق حلها قانونياً، بما في ذلك التحكيم والوساطة والتقاضي...',
-      author: 'محمد عبدالرحمن',
-      date: '2023-12-15',
-      category: 'القانون العقاري',
-      image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&h=400&fit=crop',
-      slug: 'real-estate-disputes',
-      readTime: '11 دقيقة'
+  // Get unique categories
+  const categories = ['all', ...Array.from(new Set(articles.map(article => article.category)))];
+
+  useEffect(() => {
+    loadArticles();
+  }, []);
+
+  useEffect(() => {
+    filterAndSortArticles();
+  }, [articles, searchTerm, selectedCategory, sortBy]);
+
+  const loadArticles = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('articles')
+        .select('*')
+        .eq('published', true)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setArticles(data || []);
+    } catch (error) {
+      console.error('Error loading articles:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
-  const categories = ['جميع المقالات', 'قانون العمل', 'القانون التجاري', 'الأحوال الشخصية', 'قانون التقنية', 'حماية المستهلك', 'القانون العقاري'];
+  const filterAndSortArticles = () => {
+    let filtered = [...articles];
+
+    // Filter by search term
+    if (searchTerm) {
+      filtered = filtered.filter(article =>
+        article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        article.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        article.author_name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Filter by category
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(article => article.category === selectedCategory);
+    }
+
+    // Sort articles
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'newest':
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        case 'oldest':
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        case 'title':
+          return a.title.localeCompare(b.title);
+        default:
+          return 0;
+      }
+    });
+
+    setFilteredArticles(filtered);
+    setCurrentPage(1); // Reset to first page when filtering
+  };
+
+  // Pagination
+  const indexOfLastArticle = currentPage * articlesPerPage;
+  const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
+  const currentArticles = filteredArticles.slice(indexOfFirstArticle, indexOfLastArticle);
+  const totalPages = Math.ceil(filteredArticles.length / articlesPerPage);
+
+  const handleLoadMore = () => {
+    setCurrentPage(prev => prev + 1);
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('ar-EG', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  const getReadingTime = (content: string) => {
+    const wordsPerMinute = 200;
+    const wordCount = content.split(/\s+/).length;
+    const readingTime = Math.ceil(wordCount / wordsPerMinute);
+    return `${readingTime} دقائق`;
+  };
+
+  if (loading) {
+    return (
+      <div className={`min-h-screen ${language === 'ar' ? 'font-cairo' : 'font-inter'}`} dir={language === 'ar' ? 'rtl' : 'ltr'}>
+        <Header />
+        <main className="py-20 bg-background">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <Card key={i} className="animate-pulse">
+                  <div className="h-48 bg-muted rounded-lg mb-4"></div>
+                  <CardContent className="space-y-3">
+                    <div className="h-4 bg-muted rounded w-3/4"></div>
+                    <div className="h-4 bg-muted rounded w-1/2"></div>
+                    <div className="h-16 bg-muted rounded"></div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className={`min-h-screen ${language === 'ar' ? 'font-cairo' : 'font-inter'}`} dir={language === 'ar' ? 'rtl' : 'ltr'}>
@@ -93,6 +168,8 @@ const Articles = () => {
                   <Input 
                     placeholder="ابحث في المقالات..." 
                     className="pr-10 bg-white/10 border-white/20 text-white placeholder:text-white/70"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
               </div>
@@ -103,17 +180,45 @@ const Articles = () => {
         {/* Filters */}
         <section className="py-8 bg-background border-b">
           <div className="container mx-auto px-4">
-            <div className="flex flex-wrap gap-2 justify-center">
-              {categories.map((category, index) => (
-                <Button 
-                  key={index}
-                  variant={index === 0 ? "default" : "outline"}
-                  size="sm"
-                  className={index === 0 ? "btn-secondary" : ""}
-                >
-                  {category}
-                </Button>
-              ))}
+            <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+              <div className="flex flex-wrap gap-2">
+                {categories.map((category) => (
+                  <Button 
+                    key={category}
+                    variant={selectedCategory === category ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedCategory(category)}
+                    className={selectedCategory === category ? "btn-secondary" : ""}
+                  >
+                    {category === 'all' ? 'جميع المقالات' : category}
+                  </Button>
+                ))}
+              </div>
+              
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <Filter className="w-4 h-4" />
+                  <span className="text-sm font-medium">ترتيب بواسطة:</span>
+                </div>
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger className="w-40">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="newest">الأحدث</SelectItem>
+                    <SelectItem value="oldest">الأقدم</SelectItem>
+                    <SelectItem value="title">العنوان</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            {/* Results count */}
+            <div className="mt-4 text-sm text-muted-foreground">
+              {filteredArticles.length === 0 
+                ? 'لا توجد مقالات تطابق البحث'
+                : `عرض ${Math.min(currentPage * articlesPerPage, filteredArticles.length)} من ${filteredArticles.length} مقال`
+              }
             </div>
           </div>
         </section>
@@ -121,62 +226,164 @@ const Articles = () => {
         {/* Articles Grid */}
         <section className="py-20 bg-background">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {articles.map((article, index) => (
-                <article key={index} className="card-elegant group cursor-pointer">
-                  <div className="relative mb-6 overflow-hidden rounded-lg">
-                    <img 
-                      src={article.image} 
-                      alt={article.title}
-                      className="w-full h-48 object-cover group-hover:scale-105 transition-smooth"
-                    />
-                    <div className="absolute top-4 right-4">
-                      <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full text-xs font-medium">
-                        {article.category}
-                      </span>
-                    </div>
+            {filteredArticles.length === 0 ? (
+              <div className="text-center py-16">
+                <div className="max-w-md mx-auto">
+                  <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Search className="w-12 h-12 text-muted-foreground" />
                   </div>
-                  
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
-                    <div className="flex items-center gap-1">
-                      <User className="w-4 h-4" />
-                      <span>{article.author}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
-                      <span>{article.date}</span>
-                    </div>
-                  </div>
-                  
-                  <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-smooth leading-tight">
-                    {article.title}
-                  </h3>
-                  <p className="text-muted-foreground mb-4 leading-relaxed line-clamp-3">{article.excerpt}</p>
-                  
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">{article.readTime}</span>
-                    <a 
-                      href={`/articles/${article.slug}`} 
-                      className="inline-flex items-center gap-2 text-accent hover:text-accent-light transition-smooth font-medium"
+                  <h3 className="text-2xl font-bold mb-4">لا توجد مقالات</h3>
+                  <p className="text-muted-foreground mb-6">
+                    {searchTerm || selectedCategory !== 'all' 
+                      ? 'لم يتم العثور على مقالات تطابق معايير البحث'
+                      : 'لم يتم نشر أي مقالات بعد'
+                    }
+                  </p>
+                  {(searchTerm || selectedCategory !== 'all') && (
+                    <Button 
+                      onClick={() => {
+                        setSearchTerm('');
+                        setSelectedCategory('all');
+                      }}
+                      variant="outline"
                     >
-                      اقرأ المزيد
-                      {language === 'ar' ? (
-                        <ArrowLeft className="w-4 h-4" />
-                      ) : (
-                        <ArrowRight className="w-4 h-4" />
+                      مسح الفلاتر
+                    </Button>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {currentArticles.map((article) => (
+                    <Card key={article.id} className="card-elegant group cursor-pointer overflow-hidden">
+                      <div className="relative mb-6 overflow-hidden">
+                        <img 
+                          src={article.featured_image || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&h=400&fit=crop'} 
+                          alt={article.title}
+                          className="w-full h-48 object-cover group-hover:scale-105 transition-smooth"
+                        />
+                        <div className="absolute top-4 right-4">
+                          <Badge variant="secondary" className="bg-accent text-accent-foreground">
+                            {article.category}
+                          </Badge>
+                        </div>
+                      </div>
+                      
+                      <CardContent className="p-6">
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
+                          <div className="flex items-center gap-1">
+                            <User className="w-4 h-4" />
+                            <span>{article.author_name}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Calendar className="w-4 h-4" />
+                            <span>{formatDate(article.created_at)}</span>
+                          </div>
+                        </div>
+                        
+                        <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-smooth leading-tight line-clamp-2">
+                          {article.title}
+                        </h3>
+                        <p className="text-muted-foreground mb-4 leading-relaxed line-clamp-3">{article.excerpt}</p>
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                            <span>{getReadingTime(article.content)}</span>
+                            <div className="flex items-center gap-1">
+                              <Eye className="w-4 h-4" />
+                              <span>مشاهدة</span>
+                            </div>
+                          </div>
+                          <Link 
+                            to={`/articles/${article.slug}`} 
+                            className="inline-flex items-center gap-2 text-accent hover:text-accent-light transition-smooth font-medium"
+                          >
+                            اقرأ المزيد
+                            {language === 'ar' ? (
+                              <ArrowLeft className="w-4 h-4" />
+                            ) : (
+                              <ArrowRight className="w-4 h-4" />
+                            )}
+                          </Link>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+                
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="flex flex-col items-center mt-12 gap-4">
+                    <div className="text-sm text-muted-foreground">
+                      الصفحة {currentPage} من {totalPages}
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      {currentPage > 1 && (
+                        <Button 
+                          variant="outline" 
+                          onClick={() => setCurrentPage(prev => prev - 1)}
+                        >
+                          السابق
+                        </Button>
                       )}
-                    </a>
+                      
+                      {/* Page numbers */}
+                      <div className="flex gap-1">
+                        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                          const pageNum = i + 1;
+                          return (
+                            <Button
+                              key={pageNum}
+                              variant={pageNum === currentPage ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => setCurrentPage(pageNum)}
+                              className="w-10"
+                            >
+                              {pageNum}
+                            </Button>
+                          );
+                        })}
+                        {totalPages > 5 && (
+                          <>
+                            <span className="px-2 text-muted-foreground">...</span>
+                            <Button
+                              variant={totalPages === currentPage ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => setCurrentPage(totalPages)}
+                              className="w-10"
+                            >
+                              {totalPages}
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                      
+                      {currentPage < totalPages && (
+                        <Button 
+                          variant="outline" 
+                          onClick={() => setCurrentPage(prev => prev + 1)}
+                        >
+                          التالي
+                        </Button>
+                      )}
+                    </div>
+                    
+                    {/* Load More option */}
+                    {currentPage < totalPages && (
+                      <Button 
+                        size="lg" 
+                        className="btn-secondary"
+                        onClick={handleLoadMore}
+                      >
+                        تحميل المزيد من المقالات
+                      </Button>
+                    )}
                   </div>
-                </article>
-              ))}
-            </div>
-            
-            {/* Load More */}
-            <div className="text-center mt-12">
-              <Button size="lg" className="btn-secondary">
-                تحميل المزيد من المقالات
-              </Button>
-            </div>
+                )}
+              </>
+            )}
           </div>
         </section>
       </main>
