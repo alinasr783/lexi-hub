@@ -4,21 +4,23 @@ import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useTheme } from '@/hooks/useTheme';
 import { useContactInfo } from '@/hooks/useContactInfo';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
   const { theme, toggleTheme } = useTheme();
   const { contactInfo } = useContactInfo();
+  const { settings } = useSiteSettings();
 
   const navigation = [
-    { key: 'home', href: '/' },
-    { key: 'services', href: '/services' },
-    { key: 'team', href: '/team' },
-    { key: 'articles', href: '/articles' },
-    { key: 'about', href: '/about' },
-    { key: 'contact', href: '/contact' },
-  ];
+    { key: 'home', href: '/', show: settings.showHomePage },
+    { key: 'services', href: '/services', show: settings.showServicesPage },
+    { key: 'team', href: '/team', show: settings.showTeamPage },
+    { key: 'articles', href: '/articles', show: settings.showArticlesPage },
+    { key: 'about', href: '/about', show: settings.showAboutPage },
+    { key: 'contact', href: '/contact', show: settings.showContactPage },
+  ].filter(item => item.show);
 
   return (
     <header className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-50">
@@ -51,14 +53,16 @@ export const Header = () => {
           {/* أزرار التحكم */}
           <div className="flex items-center gap-3">
             {/* زر حجز الاستشارة */}
-            <Button
-              asChild
-              className="hidden md:inline-flex btn-secondary"
-            >
-              <a href="/consultation">
-                {t('bookConsultation')}
-              </a>
-            </Button>
+            {settings.showConsultationPage && (
+              <Button
+                asChild
+                className="hidden md:inline-flex btn-secondary"
+              >
+                <a href="/consultation">
+                  {t('bookConsultation')}
+                </a>
+              </Button>
+            )}
 
             {/* تبديل اللغة */}
             <Button
@@ -113,14 +117,16 @@ export const Header = () => {
                 {t(item.key)}
               </a>
             ))}
-            <Button
-              asChild
-              className="w-full mt-4 btn-secondary"
-            >
-              <a href="/consultation" onClick={() => setIsMenuOpen(false)}>
-                {t('bookConsultation')}
-              </a>
-            </Button>
+            {settings.showConsultationPage && (
+              <Button
+                asChild
+                className="w-full mt-4 btn-secondary"
+              >
+                <a href="/consultation" onClick={() => setIsMenuOpen(false)}>
+                  {t('bookConsultation')}
+                </a>
+              </Button>
+            )}
           </nav>
         </div>
       )}

@@ -1,0 +1,1 @@
+-- Run the migration to create storage policies and bucket
