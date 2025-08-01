@@ -2,28 +2,26 @@
   "version": 2,
   "builds": [
     {
-      "src": "server/index.ts",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "client/**/*",
+      "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "../dist/public"
+        "distDir": "dist/public"
       }
     }
   ],
+  "functions": {
+    "api/*.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/server/index.ts"
+      "dest": "/api/index.js"
     },
     {
       "src": "/(.*)",
       "dest": "/dist/public/$1"
     }
-  ],
-  "installCommand": "npm install",
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist/public"
+  ]
 }

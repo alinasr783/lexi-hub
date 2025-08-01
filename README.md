@@ -92,14 +92,32 @@ The application requires the following tables in your Supabase database:
 
 ### Vercel Deployment
 
-1. Push your code to GitHub
-2. Connect your GitHub repository to Vercel
-3. Add environment variables in Vercel dashboard:
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
-4. Deploy!
+1. **Push your code to GitHub**:
+   ```bash
+   git init
+   git add .
+   git commit -m "Initial commit"
+   git branch -M main
+   git remote add origin https://github.com/yourusername/your-repo.git
+   git push -u origin main
+   ```
 
-The project includes `vercel.json` configuration for automatic deployment.
+2. **Deploy to Vercel**:
+   - Go to [Vercel Dashboard](https://vercel.com/dashboard)
+   - Click "New Project"
+   - Import your GitHub repository
+   - **Important**: Set the following build settings:
+     - **Build Command**: `npm run build`
+     - **Output Directory**: `dist/public`
+     - **Install Command**: `npm install`
+
+3. **Add Environment Variables** in Vercel dashboard:
+   - `VITE_SUPABASE_URL`: Your Supabase project URL
+   - `VITE_SUPABASE_ANON_KEY`: Your Supabase anonymous key
+
+4. **Deploy**!
+
+The project includes `vercel.json` configuration for automatic serverless deployment. The API routes will be handled by Vercel Functions, and the frontend will be served as static files.
 
 ## Scripts
 
