@@ -30,7 +30,7 @@ export const WhatsAppButton = ({
   if (!contactInfo?.whatsapp) return null;
 
   return (
-    <div className={`fixed bottom-6 right-6 z-50 ${className}`}>
+    <div className={`fixed bottom-6 right-6 z-[9999] ${className}`}>
       <button
         onClick={handleClick}
         className="

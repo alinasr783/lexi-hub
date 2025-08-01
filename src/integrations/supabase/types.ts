@@ -133,29 +133,35 @@ export type Database = {
       }
       consultation_page_settings: {
         Row: {
+          booking_instructions: string | null
           case_types: Json
           consultation_types: Json
           hero_description: string
           hero_title: string
           id: string
+          is_active: boolean | null
           time_slots: Json
           updated_at: string
         }
         Insert: {
+          booking_instructions?: string | null
           case_types?: Json
           consultation_types?: Json
           hero_description?: string
           hero_title?: string
           id?: string
+          is_active?: boolean | null
           time_slots?: Json
           updated_at?: string
         }
         Update: {
+          booking_instructions?: string | null
           case_types?: Json
           consultation_types?: Json
           hero_description?: string
           hero_title?: string
           id?: string
+          is_active?: boolean | null
           time_slots?: Json
           updated_at?: string
         }

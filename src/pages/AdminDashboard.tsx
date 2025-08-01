@@ -371,6 +371,23 @@ const AdminDashboard = () => {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
+                    <Phone className="w-5 h-5" />
+                    إعدادات صفحة الاستشارة
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    التحكم في محتوى وخيارات صفحة حجز الاستشارة
+                  </p>
+                  <Button variant="outline" size="sm" onClick={() => navigate('/admin/consultation-settings')}>
+                    إعدادات الاستشارة
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
                     <Settings className="w-5 h-5" />
                     إعدادات الموقع
                   </CardTitle>

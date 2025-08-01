@@ -22,8 +22,7 @@ export const useConsultationSettings = () => {
       setIsLoading(true);
       const { data, error } = await supabase
         .from('consultation_page_settings')
-        .select('id, hero_title, hero_description, consultation_types, time_slots, case_types, booking_instructions, is_active')
-        .eq('is_active', true)
+        .select('*')
         .maybeSingle();
 
       if (error && error.code !== 'PGRST116') {
@@ -38,8 +37,8 @@ export const useConsultationSettings = () => {
           consultation_types: Array.isArray(data.consultation_types) ? data.consultation_types : [],
           time_slots: Array.isArray(data.time_slots) ? data.time_slots as any[] : [],
           case_types: Array.isArray(data.case_types) ? data.case_types as any[] : [],
-          booking_instructions: (data as any).booking_instructions || '',
-          is_active: (data as any).is_active || true
+          booking_instructions: data.booking_instructions || '',
+          is_active: data.is_active || true
         });
       } else {
         setSettings(null);
