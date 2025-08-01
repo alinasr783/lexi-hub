@@ -1,10 +1,16 @@
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useQuery } from '@tanstack/react-query';
 import heroImage from '@/assets/hero-bg.jpg';
 
 export const HeroSection = () => {
   const { language, t } = useLanguage();
+  
+  // الحصول على معلومات الموقع من قاعدة البيانات
+  const { data: contactInfo } = useQuery<{ site_name?: string }>({
+    queryKey: ['/api/contact-info']
+  });
 
   return (
     <section 
@@ -19,7 +25,7 @@ export const HeroSection = () => {
       <div className="container mx-auto px-4 z-10">
         <div className="max-w-5xl mx-auto text-center">
           <h1 className="text-4xl lg:text-7xl font-bold mb-8 animate-slide-up leading-tight">
-            {t('heroTitle')}
+            {contactInfo?.site_name || t('heroTitle')}
           </h1>
           <p className="text-xl lg:text-3xl mb-12 text-white/95 animate-fade-in font-light leading-relaxed">
             {t('heroSubtitle')}
