@@ -80,7 +80,23 @@ const Consultation = () => {
 
   const handleTypeSelection = (typeId: string) => {
     setSelectedType(typeId);
-    setFormData(prev => ({ ...prev, consultation_type: typeId }));
+    // تحويل الـ ID إلى نوع مقبول في قاعدة البيانات
+    let dbType = 'phone'; // القيمة الافتراضية
+    
+    // البحث عن النوع المطابق
+    const selectedTypeObj = consultationTypes.find(type => type.id === typeId);
+    if (selectedTypeObj) {
+      // تحويل الاسم العربي إلى القيمة الإنجليزية المطلوبة
+      if (selectedTypeObj.name.includes('أونلاين') || selectedTypeObj.name.includes('online')) {
+        dbType = 'online';
+      } else if (selectedTypeObj.name.includes('مكتب') || selectedTypeObj.name.includes('office')) {
+        dbType = 'office';
+      } else if (selectedTypeObj.name.includes('هاتف') || selectedTypeObj.name.includes('phone')) {
+        dbType = 'phone';
+      }
+    }
+    
+    setFormData(prev => ({ ...prev, consultation_type: dbType }));
     setStep(2);
   };
 
