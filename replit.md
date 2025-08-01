@@ -19,15 +19,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Backend Architecture
 - **Runtime**: Node.js with Express.js server
-- **Database ORM**: Drizzle ORM for type-safe database operations
+- **Database**: Supabase PostgreSQL with direct client connections
 - **API Pattern**: RESTful API endpoints with Express routes
 - **File Structure**: Shared schema definitions between client and server
 - **Development**: Hot module replacement with Vite middleware integration
-- **Session Management**: PostgreSQL-based sessions with connect-pg-simple
+- **Deployment**: Configured for Vercel deployment via GitHub
 
 ## Database Design
-- **Database**: PostgreSQL with Neon serverless hosting
-- **Schema Management**: Drizzle migrations in TypeScript
+- **Database**: PostgreSQL with Supabase hosting
+- **Schema Management**: Managed through Supabase dashboard
 - **Core Entities**:
   - Services: Legal service offerings with detailed descriptions and pricing
   - Articles: Blog/news content with publication status and categories
@@ -60,12 +60,13 @@ Preferred communication style: Simple, everyday language.
 # External Dependencies
 
 ## Database & Hosting
-- **Neon Database**: Serverless PostgreSQL hosting with connection pooling
-- **Replit**: Development and deployment platform integration
+- **Supabase**: PostgreSQL database hosting with real-time features
+- **Vercel**: Production deployment platform (configured)
+- **GitHub**: Code repository and CI/CD integration
 
 ## Authentication & Security
-- **Supabase**: Used for client-side database operations and real-time features
-- **bcrypt**: Password hashing (if implemented)
+- **Supabase**: Database operations and authentication backend
+- **Environment Variables**: Secure API key management
 
 ## UI & Styling
 - **Tailwind CSS**: Utility-first CSS framework
