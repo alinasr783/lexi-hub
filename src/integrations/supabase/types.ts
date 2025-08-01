@@ -244,6 +244,7 @@ export type Database = {
           map_embed: string | null
           office_hours: string | null
           phone: string | null
+          site_name: string | null
           twitter: string | null
           updated_at: string
           whatsapp: string | null
@@ -258,6 +259,7 @@ export type Database = {
           map_embed?: string | null
           office_hours?: string | null
           phone?: string | null
+          site_name?: string | null
           twitter?: string | null
           updated_at?: string
           whatsapp?: string | null
@@ -272,6 +274,7 @@ export type Database = {
           map_embed?: string | null
           office_hours?: string | null
           phone?: string | null
+          site_name?: string | null
           twitter?: string | null
           updated_at?: string
           whatsapp?: string | null
