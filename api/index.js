@@ -1,6 +1,6 @@
 // Vercel serverless function for API routes
-import express from 'express';
-import { createClient } from '@supabase/supabase-js';
+const express = require('express');
+const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
 app.use(express.json());
@@ -263,4 +263,4 @@ app.post('/api/consultation-bookings', async (req, res) => {
 });
 
 // Export the Express app as a Vercel serverless function
-export default app;
+module.exports = app;
