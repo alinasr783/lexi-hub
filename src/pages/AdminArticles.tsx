@@ -41,7 +41,7 @@ const AdminArticles = () => {
   }, []);
 
   const checkUser = () => {
-    const adminData = localStorage.getItem('admin');
+    const adminData = localStorage.getItem('adminData');
     if (!adminData) {
       navigate('/admin/login');
       return;
