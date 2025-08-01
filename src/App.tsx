@@ -32,6 +32,7 @@ import AdminTestimonialForm from "./pages/AdminTestimonialForm";
 import AdminContact from "./pages/AdminContact";
 import AdminAbout from "./pages/AdminAbout";
 import AdminConsultationSettings from "./pages/AdminConsultationSettings";
+import AdminConsultationServices from "./pages/AdminConsultationServices";
 import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 import NotFound from "./pages/NotFound";
 
@@ -98,6 +99,7 @@ const App = () => (
             <Route path="/admin/testimonials/new" element={<AdminTestimonialForm />} />
             <Route path="/admin/testimonials/:id/edit" element={<AdminTestimonialForm />} />
             <Route path="/admin/consultations" element={<AdminConsultations />} />
+            <Route path="/admin/consultation-services" element={<AdminConsultationServices />} />
             <Route path="/admin/contact" element={<AdminContact />} />
             <Route path="/admin/about" element={<AdminAbout />} />
             <Route path="/admin/consultation-settings" element={<AdminConsultationSettings />} />

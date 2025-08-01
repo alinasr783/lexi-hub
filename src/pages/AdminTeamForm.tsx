@@ -84,22 +84,55 @@ const AdminTeamForm = () => {
     }
   };
 
-  const generateSlug = (name: string) => {
-    return name
+  const generateSlug = async (name: string): Promise<string> => {
+    const baseSlug = name
       .toLowerCase()
       .replace(/[^a-z0-9\u0600-\u06FF\s]/g, '')
       .replace(/\s+/g, '-')
       .replace(/^-+|-+$/g, '');
+    
+    // Check if slug exists
+    const { data: existing } = await supabase
+      .from('team_members')
+      .select('slug')
+      .eq('slug', baseSlug)
+      .neq('id', id || ''); // Exclude current record if editing
+    
+    if (!existing || existing.length === 0) {
+      return baseSlug;
+    }
+    
+    // If slug exists, add number suffix
+    let counter = 1;
+    let newSlug = `${baseSlug}-${counter}`;
+    
+    while (true) {
+      const { data: existingNumbered } = await supabase
+        .from('team_members')
+        .select('slug')
+        .eq('slug', newSlug)
+        .neq('id', id || '');
+      
+      if (!existingNumbered || existingNumbered.length === 0) {
+        return newSlug;
+      }
+      
+      counter++;
+      newSlug = `${baseSlug}-${counter}`;
+    }
   };
 
-  const handleInputChange = (field: keyof TeamMemberFormData, value: string | number | string[]) => {
+  const handleInputChange = async (field: keyof TeamMemberFormData, value: string | number | string[]) => {
     setFormData(prev => {
       const updated = { ...prev, [field]: value };
-      if (field === 'name') {
-        updated.slug = generateSlug(value as string);
-      }
       return updated;
     });
+    
+    // Generate slug when name changes
+    if (field === 'name' && value) {
+      const newSlug = await generateSlug(value as string);
+      setFormData(prev => ({ ...prev, slug: newSlug }));
+    }
   };
 
   const addEducation = () => {

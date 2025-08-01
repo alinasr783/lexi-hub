@@ -44,7 +44,7 @@ const AdminDashboard = () => {
   const checkUser = async () => {
     try {
       // التحقق من وجود بيانات الإدمن في localStorage
-      const adminData = localStorage.getItem('admin');
+      const adminData = localStorage.getItem('adminData');
       if (!adminData) {
         navigate('/admin/login');
         return;
@@ -90,7 +90,7 @@ const AdminDashboard = () => {
   const handleLogout = async () => {
     try {
       // حذف بيانات الإدمن من localStorage
-      localStorage.removeItem('admin');
+      localStorage.removeItem('adminData');
       toast({
         title: "تم تسجيل الخروج",
         description: "تم تسجيل خروجك بنجاح",
@@ -381,6 +381,23 @@ const AdminDashboard = () => {
                   </p>
                   <Button variant="outline" size="sm" onClick={() => navigate('/admin/consultation-settings')}>
                     إعدادات الاستشارة
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Phone className="w-5 h-5" />
+                    أسعار الاستشارات
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    إدارة أسعار ومدة خدمات الاستشارات القانونية بالجنيه المصري
+                  </p>
+                  <Button variant="outline" size="sm" onClick={() => navigate('/admin/consultation-services')}>
+                    إدارة الأسعار والخدمات
                   </Button>
                 </CardContent>
               </Card>
