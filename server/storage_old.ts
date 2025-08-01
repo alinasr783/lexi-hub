@@ -16,8 +16,6 @@ import {
   type Testimonial, type InsertTestimonial,
   type ConsultationService, type InsertConsultationService
 } from "@shared/schema";
-import { db } from "./db";
-import { eq, desc, and } from "drizzle-orm";
 
 export interface IStorage {
   // Services
@@ -111,6 +109,9 @@ export interface IStorage {
   deleteConsultationService(id: string): Promise<boolean>;
 }
 
+import { db } from "./db";
+import { eq, desc, and } from "drizzle-orm";
+
 export class DatabaseStorage implements IStorage {
   // Services
   async getServices(): Promise<Service[]> {
@@ -144,301 +145,464 @@ export class DatabaseStorage implements IStorage {
 
   // Articles
   async getArticles(): Promise<Article[]> {
-    return await db.select().from(articles).orderBy(desc(articles.createdAt));
+    return Array.from(this.articles.values());
   }
 
   async getPublishedArticles(): Promise<Article[]> {
-    return await db.select().from(articles).where(eq(articles.published, true)).orderBy(desc(articles.createdAt));
+    return Array.from(this.articles.values()).filter(article => article.published);
   }
 
   async getArticle(id: string): Promise<Article | undefined> {
-    const result = await db.select().from(articles).where(eq(articles.id, id)).limit(1);
-    return result[0];
+    return this.articles.get(id);
   }
 
   async getArticleBySlug(slug: string): Promise<Article | undefined> {
-    const result = await db.select().from(articles).where(eq(articles.slug, slug)).limit(1);
-    return result[0];
+    return Array.from(this.articles.values()).find(article => article.slug === slug);
   }
 
   async createArticle(article: InsertArticle): Promise<Article> {
-    const result = await db.insert(articles).values(article).returning();
-    return result[0];
+    const newArticle: Article = {
+      ...article,
+      id: crypto.randomUUID(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      excerpt: article.excerpt ?? null,
+      featuredImage: article.featuredImage ?? null,
+      published: article.published ?? null
+    };
+    this.articles.set(newArticle.id, newArticle);
+    return newArticle;
   }
 
   async updateArticle(id: string, article: Partial<InsertArticle>): Promise<Article | undefined> {
-    const result = await db.update(articles).set(article).where(eq(articles.id, id)).returning();
-    return result[0];
+    const existing = this.articles.get(id);
+    if (!existing) return undefined;
+    
+    const updated: Article = {
+      ...existing,
+      ...article,
+      updatedAt: new Date()
+    };
+    this.articles.set(id, updated);
+    return updated;
   }
 
   async deleteArticle(id: string): Promise<boolean> {
-    const result = await db.delete(articles).where(eq(articles.id, id));
-    return (result.rowCount ?? 0) > 0;
+    return this.articles.delete(id);
   }
 
   // Team Members
   async getTeamMembers(): Promise<TeamMember[]> {
-    return await db.select().from(teamMembers).orderBy(desc(teamMembers.createdAt));
+    return Array.from(this.teamMembers.values());
   }
 
   async getTeamMember(id: string): Promise<TeamMember | undefined> {
-    const result = await db.select().from(teamMembers).where(eq(teamMembers.id, id)).limit(1);
-    return result[0];
+    return this.teamMembers.get(id);
   }
 
   async getTeamMemberBySlug(slug: string): Promise<TeamMember | undefined> {
-    const result = await db.select().from(teamMembers).where(eq(teamMembers.slug, slug)).limit(1);
-    return result[0];
+    return Array.from(this.teamMembers.values()).find(member => member.slug === slug);
   }
 
   async createTeamMember(teamMember: InsertTeamMember): Promise<TeamMember> {
-    const result = await db.insert(teamMembers).values(teamMember).returning();
-    return result[0];
+    const newMember: TeamMember = {
+      ...teamMember,
+      id: crypto.randomUUID(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      bio: teamMember.bio ?? null,
+      photo: teamMember.photo ?? null,
+      email: teamMember.email ?? null,
+      phone: teamMember.phone ?? null,
+      linkedin: teamMember.linkedin ?? null,
+      yearsExperience: teamMember.yearsExperience ?? null,
+      education: teamMember.education ?? null
+    };
+    this.teamMembers.set(newMember.id, newMember);
+    return newMember;
   }
 
   async updateTeamMember(id: string, teamMember: Partial<InsertTeamMember>): Promise<TeamMember | undefined> {
-    const result = await db.update(teamMembers).set(teamMember).where(eq(teamMembers.id, id)).returning();
-    return result[0];
+    const existing = this.teamMembers.get(id);
+    if (!existing) return undefined;
+    
+    const updated: TeamMember = {
+      ...existing,
+      ...teamMember,
+      updatedAt: new Date()
+    };
+    this.teamMembers.set(id, updated);
+    return updated;
   }
 
   async deleteTeamMember(id: string): Promise<boolean> {
-    const result = await db.delete(teamMembers).where(eq(teamMembers.id, id));
-    return (result.rowCount ?? 0) > 0;
+    return this.teamMembers.delete(id);
   }
 
   // Page Contents
   async getPageContents(): Promise<PageContent[]> {
-    return await db.select().from(pageContents);
+    return Array.from(this.pageContents.values());
   }
 
   async getPageContent(pageKey: string): Promise<PageContent | undefined> {
-    const result = await db.select().from(pageContents).where(eq(pageContents.pageKey, pageKey)).limit(1);
-    return result[0];
+    return Array.from(this.pageContents.values()).find(content => content.pageKey === pageKey);
   }
 
   async createPageContent(pageContent: InsertPageContent): Promise<PageContent> {
-    const result = await db.insert(pageContents).values(pageContent).returning();
-    return result[0];
+    const newContent: PageContent = {
+      ...pageContent,
+      id: crypto.randomUUID(),
+      updatedAt: new Date(),
+      imageUrl: pageContent.imageUrl ?? null,
+      metaDescription: pageContent.metaDescription ?? null
+    };
+    this.pageContents.set(newContent.id, newContent);
+    return newContent;
   }
 
   async updatePageContent(pageKey: string, pageContent: Partial<InsertPageContent>): Promise<PageContent | undefined> {
-    const result = await db.update(pageContents).set(pageContent).where(eq(pageContents.pageKey, pageKey)).returning();
-    return result[0];
+    const existing = Array.from(this.pageContents.values()).find(content => content.pageKey === pageKey);
+    if (!existing) return undefined;
+    
+    const updated: PageContent = {
+      ...existing,
+      ...pageContent,
+      updatedAt: new Date()
+    };
+    this.pageContents.set(existing.id, updated);
+    return updated;
   }
 
   // Jobs
   async getJobs(): Promise<Job[]> {
-    return await db.select().from(jobs).orderBy(desc(jobs.createdAt));
+    return Array.from(this.jobs.values());
   }
 
   async getActiveJobs(): Promise<Job[]> {
-    return await db.select().from(jobs).where(eq(jobs.isActive, true)).orderBy(desc(jobs.createdAt));
+    return Array.from(this.jobs.values()).filter(job => job.isActive);
   }
 
   async getJob(id: string): Promise<Job | undefined> {
-    const result = await db.select().from(jobs).where(eq(jobs.id, id)).limit(1);
-    return result[0];
+    return this.jobs.get(id);
   }
 
   async createJob(job: InsertJob): Promise<Job> {
-    const result = await db.insert(jobs).values(job).returning();
-    return result[0];
+    const newJob: Job = {
+      ...job,
+      id: crypto.randomUUID(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      requirements: job.requirements ?? null,
+      benefits: job.benefits ?? null,
+      salaryRange: job.salaryRange ?? null,
+      employmentType: job.employmentType ?? null,
+      experienceLevel: job.experienceLevel ?? null,
+      applyEmail: job.applyEmail ?? null,
+      isActive: job.isActive ?? null
+    };
+    this.jobs.set(newJob.id, newJob);
+    return newJob;
   }
 
   async updateJob(id: string, job: Partial<InsertJob>): Promise<Job | undefined> {
-    const result = await db.update(jobs).set(job).where(eq(jobs.id, id)).returning();
-    return result[0];
+    const existing = this.jobs.get(id);
+    if (!existing) return undefined;
+    
+    const updated: Job = {
+      ...existing,
+      ...job,
+      updatedAt: new Date()
+    };
+    this.jobs.set(id, updated);
+    return updated;
   }
 
   async deleteJob(id: string): Promise<boolean> {
-    const result = await db.delete(jobs).where(eq(jobs.id, id));
-    return (result.rowCount ?? 0) > 0;
+    return this.jobs.delete(id);
   }
 
   // FAQs
   async getFaqs(): Promise<Faq[]> {
-    return await db.select().from(faqs).orderBy(faqs.orderIndex);
+    return Array.from(this.faqs.values()).sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
   }
 
   async getFaq(id: string): Promise<Faq | undefined> {
-    const result = await db.select().from(faqs).where(eq(faqs.id, id)).limit(1);
-    return result[0];
+    return this.faqs.get(id);
   }
 
   async createFaq(faq: InsertFaq): Promise<Faq> {
-    const result = await db.insert(faqs).values(faq).returning();
-    return result[0];
+    const newFaq: Faq = {
+      ...faq,
+      id: crypto.randomUUID(),
+      createdAt: new Date(),
+      category: faq.category ?? null,
+      orderIndex: faq.orderIndex ?? null
+    };
+    this.faqs.set(newFaq.id, newFaq);
+    return newFaq;
   }
 
   async updateFaq(id: string, faq: Partial<InsertFaq>): Promise<Faq | undefined> {
-    const result = await db.update(faqs).set(faq).where(eq(faqs.id, id)).returning();
-    return result[0];
+    const existing = this.faqs.get(id);
+    if (!existing) return undefined;
+    
+    const updated: Faq = {
+      ...existing,
+      ...faq
+    };
+    this.faqs.set(id, updated);
+    return updated;
   }
 
   async deleteFaq(id: string): Promise<boolean> {
-    const result = await db.delete(faqs).where(eq(faqs.id, id));
-    return (result.rowCount ?? 0) > 0;
+    return this.faqs.delete(id);
   }
 
   // Admins
   async getAdmins(): Promise<Admin[]> {
-    return await db.select().from(admins).orderBy(desc(admins.createdAt));
+    return Array.from(this.admins.values());
   }
 
   async getAdmin(id: string): Promise<Admin | undefined> {
-    const result = await db.select().from(admins).where(eq(admins.id, id)).limit(1);
-    return result[0];
+    return this.admins.get(id);
   }
 
   async getAdminByEmail(email: string): Promise<Admin | undefined> {
-    const result = await db.select().from(admins).where(eq(admins.email, email)).limit(1);
-    return result[0];
+    return Array.from(this.admins.values()).find(admin => admin.email === email);
   }
 
   async createAdmin(admin: InsertAdmin): Promise<Admin> {
-    const result = await db.insert(admins).values(admin).returning();
-    return result[0];
+    const newAdmin: Admin = {
+      ...admin,
+      id: crypto.randomUUID(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      role: admin.role ?? null,
+      isActive: admin.isActive ?? null
+    };
+    this.admins.set(newAdmin.id, newAdmin);
+    return newAdmin;
   }
 
   async updateAdmin(id: string, admin: Partial<InsertAdmin>): Promise<Admin | undefined> {
-    const result = await db.update(admins).set(admin).where(eq(admins.id, id)).returning();
-    return result[0];
+    const existing = this.admins.get(id);
+    if (!existing) return undefined;
+    
+    const updated: Admin = {
+      ...existing,
+      ...admin,
+      updatedAt: new Date()
+    };
+    this.admins.set(id, updated);
+    return updated;
   }
 
   async deleteAdmin(id: string): Promise<boolean> {
-    const result = await db.delete(admins).where(eq(admins.id, id));
-    return (result.rowCount ?? 0) > 0;
+    return this.admins.delete(id);
   }
 
   // Consultation Page Settings
   async getConsultationPageSettings(): Promise<ConsultationPageSettings | undefined> {
-    const result = await db.select().from(consultationPageSettings).limit(1);
-    return result[0];
+    return this.consultationPageSettings;
   }
 
   async updateConsultationPageSettings(settings: InsertConsultationPageSettings): Promise<ConsultationPageSettings> {
-    // Try to update first, if no rows affected, insert
-    const updateResult = await db.update(consultationPageSettings).set(settings).returning();
-    if (updateResult.length > 0) {
-      return updateResult[0];
-    }
-    const insertResult = await db.insert(consultationPageSettings).values(settings).returning();
-    return insertResult[0];
+    const updated: ConsultationPageSettings = {
+      ...settings,
+      id: this.consultationPageSettings?.id || crypto.randomUUID(),
+      updatedAt: new Date(),
+      consultationTypes: settings.consultationTypes ?? null,
+      caseTypes: settings.caseTypes ?? null,
+      timeSlots: settings.timeSlots ?? null,
+      bookingInstructions: settings.bookingInstructions ?? null,
+      isActive: settings.isActive ?? null
+    };
+    this.consultationPageSettings = updated;
+    return updated;
   }
 
   // Contact Forms
   async getContactForms(): Promise<ContactForm[]> {
-    return await db.select().from(contactForms).orderBy(desc(contactForms.createdAt));
+    return Array.from(this.contactForms.values()).sort((a, b) => 
+      new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime()
+    );
   }
 
   async getContactForm(id: string): Promise<ContactForm | undefined> {
-    const result = await db.select().from(contactForms).where(eq(contactForms.id, id)).limit(1);
-    return result[0];
+    return this.contactForms.get(id);
   }
 
   async createContactForm(contactForm: InsertContactForm): Promise<ContactForm> {
-    const result = await db.insert(contactForms).values(contactForm).returning();
-    return result[0];
+    const newForm: ContactForm = {
+      ...contactForm,
+      id: crypto.randomUUID(),
+      createdAt: new Date(),
+      phone: contactForm.phone ?? null,
+      isRead: contactForm.isRead ?? null
+    };
+    this.contactForms.set(newForm.id, newForm);
+    return newForm;
   }
 
   async markContactFormAsRead(id: string): Promise<boolean> {
-    const result = await db.update(contactForms).set({ isRead: true }).where(eq(contactForms.id, id));
-    return (result.rowCount ?? 0) > 0;
+    const existing = this.contactForms.get(id);
+    if (!existing) return false;
+    
+    existing.isRead = true;
+    this.contactForms.set(id, existing);
+    return true;
   }
 
   // Consultation Bookings
   async getConsultationBookings(): Promise<ConsultationBooking[]> {
-    return await db.select().from(consultationBookings).orderBy(desc(consultationBookings.createdAt));
+    return Array.from(this.consultationBookings.values()).sort((a, b) => 
+      new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime()
+    );
   }
 
   async getConsultationBooking(id: string): Promise<ConsultationBooking | undefined> {
-    const result = await db.select().from(consultationBookings).where(eq(consultationBookings.id, id)).limit(1);
-    return result[0];
+    return this.consultationBookings.get(id);
   }
 
   async createConsultationBooking(booking: InsertConsultationBooking): Promise<ConsultationBooking> {
-    const result = await db.insert(consultationBookings).values(booking).returning();
-    return result[0];
+    const newBooking: ConsultationBooking = {
+      ...booking,
+      id: crypto.randomUUID(),
+      createdAt: new Date(),
+      name: booking.name ?? null,
+      email: booking.email ?? null,
+      phone: booking.phone ?? null,
+      consultationType: booking.consultationType ?? null,
+      caseType: booking.caseType ?? null,
+      preferredDate: booking.preferredDate ?? null,
+      preferredTime: booking.preferredTime ?? null,
+      message: booking.message ?? null,
+      status: booking.status ?? null
+    };
+    this.consultationBookings.set(newBooking.id, newBooking);
+    return newBooking;
   }
 
   async updateConsultationBookingStatus(id: string, status: string): Promise<ConsultationBooking | undefined> {
-    const result = await db.update(consultationBookings).set({ status }).where(eq(consultationBookings.id, id)).returning();
-    return result[0];
+    const existing = this.consultationBookings.get(id);
+    if (!existing) return undefined;
+    
+    existing.status = status;
+    this.consultationBookings.set(id, existing);
+    return existing;
   }
 
   // Contact Info
   async getContactInfo(): Promise<ContactInfo | undefined> {
-    const result = await db.select().from(contactInfo).limit(1);
-    return result[0];
+    return this.contactInfo;
   }
 
-  async updateContactInfo(contactInfoData: InsertContactInfo): Promise<ContactInfo> {
-    // Try to update first, if no rows affected, insert
-    const updateResult = await db.update(contactInfo).set(contactInfoData).returning();
-    if (updateResult.length > 0) {
-      return updateResult[0];
-    }
-    const insertResult = await db.insert(contactInfo).values(contactInfoData).returning();
-    return insertResult[0];
+  async updateContactInfo(contactInfo: InsertContactInfo): Promise<ContactInfo> {
+    const updated: ContactInfo = {
+      ...contactInfo,
+      id: this.contactInfo?.id || crypto.randomUUID(),
+      updatedAt: new Date(),
+      siteName: contactInfo.siteName ?? null,
+      phone: contactInfo.phone ?? null,
+      email: contactInfo.email ?? null,
+      address: contactInfo.address ?? null,
+      addressLink: contactInfo.addressLink ?? null,
+      officeHours: contactInfo.officeHours ?? null,
+      facebook: contactInfo.facebook ?? null,
+      twitter: contactInfo.twitter ?? null,
+      linkedin: contactInfo.linkedin ?? null,
+      whatsapp: contactInfo.whatsapp ?? null,
+      mapEmbed: contactInfo.mapEmbed ?? null
+    };
+    this.contactInfo = updated;
+    return updated;
   }
 
   // Testimonials
   async getTestimonials(): Promise<Testimonial[]> {
-    return await db.select().from(testimonials).orderBy(desc(testimonials.createdAt));
+    return Array.from(this.testimonials.values()).sort((a, b) => 
+      new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime()
+    );
   }
 
   async getFeaturedTestimonials(): Promise<Testimonial[]> {
-    return await db.select().from(testimonials).where(eq(testimonials.isFeatured, true)).orderBy(desc(testimonials.createdAt));
+    return Array.from(this.testimonials.values()).filter(testimonial => testimonial.isFeatured);
   }
 
   async getTestimonial(id: string): Promise<Testimonial | undefined> {
-    const result = await db.select().from(testimonials).where(eq(testimonials.id, id)).limit(1);
-    return result[0];
+    return this.testimonials.get(id);
   }
 
   async createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial> {
-    const result = await db.insert(testimonials).values(testimonial).returning();
-    return result[0];
+    const newTestimonial: Testimonial = {
+      ...testimonial,
+      id: crypto.randomUUID(),
+      createdAt: new Date(),
+      rating: testimonial.rating ?? null,
+      isAnonymous: testimonial.isAnonymous ?? null,
+      isFeatured: testimonial.isFeatured ?? null
+    };
+    this.testimonials.set(newTestimonial.id, newTestimonial);
+    return newTestimonial;
   }
 
   async updateTestimonial(id: string, testimonial: Partial<InsertTestimonial>): Promise<Testimonial | undefined> {
-    const result = await db.update(testimonials).set(testimonial).where(eq(testimonials.id, id)).returning();
-    return result[0];
+    const existing = this.testimonials.get(id);
+    if (!existing) return undefined;
+    
+    const updated: Testimonial = {
+      ...existing,
+      ...testimonial
+    };
+    this.testimonials.set(id, updated);
+    return updated;
   }
 
   async deleteTestimonial(id: string): Promise<boolean> {
-    const result = await db.delete(testimonials).where(eq(testimonials.id, id));
-    return (result.rowCount ?? 0) > 0;
+    return this.testimonials.delete(id);
   }
 
   // Consultation Services
   async getConsultationServices(): Promise<ConsultationService[]> {
-    return await db.select().from(consultationServices).orderBy(desc(consultationServices.createdAt));
+    return Array.from(this.consultationServices.values());
   }
 
   async getActiveConsultationServices(): Promise<ConsultationService[]> {
-    return await db.select().from(consultationServices).where(eq(consultationServices.isActive, true)).orderBy(desc(consultationServices.createdAt));
+    return Array.from(this.consultationServices.values()).filter(service => service.isActive);
   }
 
   async getConsultationService(id: string): Promise<ConsultationService | undefined> {
-    const result = await db.select().from(consultationServices).where(eq(consultationServices.id, id)).limit(1);
-    return result[0];
+    return this.consultationServices.get(id);
   }
 
   async createConsultationService(service: InsertConsultationService): Promise<ConsultationService> {
-    const result = await db.insert(consultationServices).values(service).returning();
-    return result[0];
+    const newService: ConsultationService = {
+      ...service,
+      id: crypto.randomUUID(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      isActive: service.isActive ?? null
+    };
+    this.consultationServices.set(newService.id, newService);
+    return newService;
   }
 
   async updateConsultationService(id: string, service: Partial<InsertConsultationService>): Promise<ConsultationService | undefined> {
-    const result = await db.update(consultationServices).set(service).where(eq(consultationServices.id, id)).returning();
-    return result[0];
+    const existing = this.consultationServices.get(id);
+    if (!existing) return undefined;
+    
+    const updated: ConsultationService = {
+      ...existing,
+      ...service,
+      updatedAt: new Date()
+    };
+    this.consultationServices.set(id, updated);
+    return updated;
   }
 
   async deleteConsultationService(id: string): Promise<boolean> {
-    const result = await db.delete(consultationServices).where(eq(consultationServices.id, id));
-    return (result.rowCount ?? 0) > 0;
+    return this.consultationServices.delete(id);
   }
 }
 
-export const storage = new DatabaseStorage();
+export const storage = new MemStorage();
