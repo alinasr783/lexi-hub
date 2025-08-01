@@ -5,74 +5,67 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowRight, Calendar, User, Share, Bookmark, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+
+interface Article {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt: string;
+  featured_image: string;
+  author_name: string;
+  category: string;
+  published: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
 const ArticleDetail = () => {
   const { language } = useLanguage();
   const { slug } = useParams();
+  const [article, setArticle] = useState<Article | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // محاكاة بيانات المقال (سيتم استبدالها ببيانات من Supabase)
-  const article = {
-    title: 'التحديثات الجديدة في قانون الشركات السعودي 2024',
-    excerpt: 'نظرة شاملة على أحدث التعديلات في قانون الشركات وتأثيرها على الأعمال التجارية',
-    content: `
-      شهد قانون الشركات في المملكة العربية السعودية تطورات مهمة خلال عام 2024، والتي تهدف إلى تحسين بيئة الأعمال وتعزيز الشفافية والحوكمة في الشركات. هذه التحديثات تأتي ضمن جهود المملكة لتحقيق رؤية 2030 وتطوير القطاع الخاص.
+  useEffect(() => {
+    const loadArticle = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('articles')
+          .select('*')
+          .eq('slug', slug)
+          .eq('published', true)
+          .single();
 
-      ## التعديلات الرئيسية
+        if (error) throw error;
+        setArticle(data);
+      } catch (error) {
+        console.error('Error loading article:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-      ### 1. تبسيط إجراءات تأسيس الشركات
-      تم تبسيط الإجراءات المطلوبة لتأسيس الشركات بشكل كبير، حيث أصبح بإمكان رواد الأعمال إكمال عملية التأسيس خلال 24 ساعة فقط في معظم الحالات. هذا التطور يشمل:
+    if (slug) {
+      loadArticle();
+    }
+  }, [slug]);
 
-      - الموافقة الإلكترونية على اسم الشركة خلال دقائق
-      - التكامل الكامل بين منصة "قوام" والجهات الحكومية المختلفة
-      - إمكانية الحصول على السجل التجاري والرخص ذات العلاقة في نفس الوقت
-
-      ### 2. تعزيز حقوق المساهمين
-      تم تطوير الأحكام المتعلقة بحماية حقوق المساهمين، خاصة المساهمين الأقلية، من خلال:
-
-      - تعزيز حقوق التصويت والمشاركة في القرارات المهمة
-      - تحسين آليات الإفصاح والشفافية
-      - وضع ضوابط أكثر صرامة لتضارب المصالح
-
-      ### 3. تطوير أحكام الحوكمة
-      تم تحديث لوائح الحوكمة لتواكب أفضل الممارسات الدولية، وتشمل:
-
-      - متطلبات جديدة لاستقلالية أعضاء مجلس الإدارة
-      - تعزيز دور لجان المراجعة والمخاطر
-      - وضع معايير أكثر وضوحاً لمسؤوليات الإدارة التنفيذية
-
-      ## التأثير على الشركات الموجودة
-
-      الشركات القائمة لديها فترة انتقالية تمتد لستة أشهر لتطبيق التعديلات الجديدة. ينصح بشدة بالبدء في عملية التحديث فوراً لتجنب أي مخالفات محتملة.
-
-      ### الخطوات المطلوبة:
-      1. مراجعة النظام الأساسي للشركة
-      2. تحديث لوائح الحوكمة الداخلية
-      3. تدريب أعضاء مجلس الإدارة على المتطلبات الجديدة
-      4. تطوير أنظمة الإفصاح والشفافية
-
-      ## التحديات والفرص
-
-      رغم أن هذه التعديلات تتطلب استثماراً في التطوير والتدريب، إلا أنها تفتح آفاقاً جديدة أمام الشركات السعودية للنمو والتوسع محلياً وإقليمياً.
-
-      ### الفرص المتاحة:
-      - تحسين الوصول إلى التمويل والاستثمار
-      - زيادة الثقة من المستثمرين المحليين والأجانب
-      - تطوير قدرات الشركة على المنافسة إقليمياً وعالمياً
-
-      ## الخلاصة
-
-      التحديثات الجديدة في قانون الشركات تمثل خطوة مهمة نحو تطوير بيئة الأعمال في المملكة. الشركات التي تتبنى هذه التغييرات بشكل استباقي ستكون في موقع أفضل للاستفادة من الفرص المستقبلية.
-
-      نحن في مكتب ليكسي هاب نقدم خدمات استشارية شاملة لمساعدة الشركات على فهم وتطبيق هذه التعديلات بكفاءة واحترافية.
-    `,
-    author: 'د. أحمد المحمدي',
-    publishDate: '15 نوفمبر 2024',
-    category: 'القانون التجاري',
-    readTime: '8 دقائق للقراءة',
-    views: 1250,
-    featuredImage: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1200&h=800&fit=crop',
-    tags: ['قانون الشركات', 'التحديثات القانونية', 'رؤية 2030', 'الحوكمة']
-  };
+  if (isLoading) {
+    return (
+      <div className={`min-h-screen ${language === 'ar' ? 'font-cairo' : 'font-inter'}`} dir={language === 'ar' ? 'rtl' : 'ltr'}>
+        <Header />
+        <div className="container mx-auto px-4 py-20 text-center">
+          <div className="animate-pulse">
+            <div className="h-8 bg-muted rounded w-3/4 mx-auto mb-4"></div>
+            <div className="h-4 bg-muted rounded w-1/2 mx-auto"></div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!article) {
     return (
@@ -118,21 +111,17 @@ const ArticleDetail = () => {
                   <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full">
                     {article.category}
                   </span>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4" />
-                    <span>{article.publishDate}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <User className="w-4 h-4" />
-                    <span>{article.author}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Eye className="w-4 h-4" />
-                    <span>{article.views} مشاهدة</span>
-                  </div>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4" />
+                      <span>{new Date(article.created_at).toLocaleDateString('ar-EG')}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <User className="w-4 h-4" />
+                      <span>{article.author_name}</span>
+                    </div>
                 </div>
                 
-                <h1 className="text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+                 <h1 className="text-4xl lg:text-5xl font-bold mb-6 leading-tight">
                   {article.title}
                 </h1>
                 
@@ -141,14 +130,34 @@ const ArticleDetail = () => {
                 </p>
 
                 <div className="flex items-center justify-between flex-wrap gap-4">
-                  <span className="text-sm text-muted-foreground">{article.readTime}</span>
+                  <span className="text-sm text-muted-foreground">
+                    تم النشر في {new Date(article.created_at).toLocaleDateString('ar-EG')}
+                  </span>
                   
                   <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => navigator.share ? navigator.share({
+                        title: article.title,
+                        text: article.excerpt,
+                        url: window.location.href
+                      }) : navigator.clipboard.writeText(window.location.href)}
+                    >
                       <Share className="w-4 h-4 mr-2" />
                       مشاركة
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        const favorites = JSON.parse(localStorage.getItem('favoriteArticles') || '[]');
+                        const updatedFavorites = favorites.includes(article.id) 
+                          ? favorites.filter((id: string) => id !== article.id)
+                          : [...favorites, article.id];
+                        localStorage.setItem('favoriteArticles', JSON.stringify(updatedFavorites));
+                      }}
+                    >
                       <Bookmark className="w-4 h-4 mr-2" />
                       حفظ
                     </Button>
@@ -157,76 +166,30 @@ const ArticleDetail = () => {
               </div>
 
               {/* Featured Image */}
-              <div className="mb-12">
-                <img 
-                  src={article.featuredImage} 
-                  alt={article.title}
-                  className="w-full h-96 object-cover rounded-2xl shadow-elegant"
-                />
-              </div>
+              {article.featured_image && (
+                <div className="mb-12">
+                  <img 
+                    src={article.featured_image} 
+                    alt={article.title}
+                    className="w-full h-96 object-cover rounded-2xl shadow-elegant"
+                  />
+                </div>
+              )}
 
               {/* Article Body */}
               <div className="prose prose-lg max-w-none mb-12">
-                {article.content.split('\n\n').map((paragraph, index) => {
-                  if (paragraph.trim().startsWith('##')) {
-                    return (
-                      <h2 key={index} className="text-3xl font-bold mt-12 mb-6 text-primary">
-                        {paragraph.replace('##', '').trim()}
-                      </h2>
-                    );
-                  }
-                  if (paragraph.trim().startsWith('###')) {
-                    return (
-                      <h3 key={index} className="text-2xl font-semibold mt-8 mb-4">
-                        {paragraph.replace('###', '').trim()}
-                      </h3>
-                    );
-                  }
-                  if (paragraph.trim().startsWith('-')) {
-                    const listItems = paragraph.split('\n').filter(item => item.trim().startsWith('-'));
-                    return (
-                      <ul key={index} className="list-disc list-inside space-y-2 mb-6">
-                        {listItems.map((item, idx) => (
-                          <li key={idx} className="text-muted-foreground">
-                            {item.replace('-', '').trim()}
-                          </li>
-                        ))}
-                      </ul>
-                    );
-                  }
-                  if (paragraph.trim().match(/^\d+\./)) {
-                    const listItems = paragraph.split('\n').filter(item => item.trim().match(/^\d+\./));
-                    return (
-                      <ol key={index} className="list-decimal list-inside space-y-2 mb-6">
-                        {listItems.map((item, idx) => (
-                          <li key={idx} className="text-muted-foreground">
-                            {item.replace(/^\d+\./, '').trim()}
-                          </li>
-                        ))}
-                      </ol>
-                    );
-                  }
-                  return (
-                    <p key={index} className="mb-6 leading-relaxed text-muted-foreground">
-                      {paragraph.trim()}
-                    </p>
-                  );
-                })}
+                <div 
+                  className="leading-relaxed text-muted-foreground"
+                  dangerouslySetInnerHTML={{ __html: article.content }}
+                />
               </div>
 
-              {/* Tags */}
+              {/* Category */}
               <div className="mb-12">
-                <h3 className="text-lg font-semibold mb-4">العلامات:</h3>
-                <div className="flex flex-wrap gap-2">
-                  {article.tags.map((tag, index) => (
-                    <span 
-                      key={index}
-                      className="bg-muted text-muted-foreground px-3 py-1 rounded-full text-sm"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
+                <h3 className="text-lg font-semibold mb-4">التصنيف:</h3>
+                <span className="bg-muted text-muted-foreground px-3 py-1 rounded-full text-sm">
+                  #{article.category}
+                </span>
               </div>
 
               {/* Author Bio */}
@@ -237,7 +200,7 @@ const ArticleDetail = () => {
                       <User className="w-8 h-8 text-primary-foreground" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-xl font-semibold mb-2">{article.author}</h3>
+                      <h3 className="text-xl font-semibold mb-2">{article.author_name}</h3>
                       <p className="text-muted-foreground mb-4">
                         محامي متخصص في القانون التجاري وقانون الشركات مع خبرة تزيد عن 12 عاماً في المجال القانوني. 
                         حاصل على درجة الدكتوراه في القانون التجاري من جامعة الملك سعود.

@@ -41,13 +41,18 @@ const AdminLogin = () => {
       }
 
       // حفظ بيانات الإدمن في localStorage
-      localStorage.setItem('admin', JSON.stringify(admin));
+      localStorage.setItem('adminData', JSON.stringify(admin));
       
       toast({
         title: "تم تسجيل الدخول بنجاح",
         description: `مرحباً بك ${admin.name}`,
       });
-      navigate('/admin/dashboard');
+      
+      // إجبار التوجه للداشبورد
+      setTimeout(() => {
+        navigate('/admin/dashboard');
+        window.location.href = '/admin/dashboard';
+      }, 100);
       
     } catch (error) {
       toast({
