@@ -179,7 +179,13 @@ export class MemStorage implements IStorage {
       ...service,
       id: crypto.randomUUID(),
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      detailedDescription: service.detailedDescription ?? null,
+      icon: service.icon ?? null,
+      image: service.image ?? null,
+      priceRange: service.priceRange ?? null,
+      duration: service.duration ?? null,
+      requiredDocuments: service.requiredDocuments ?? null
     };
     this.services.set(newService.id, newService);
     return newService;
@@ -224,7 +230,10 @@ export class MemStorage implements IStorage {
       ...article,
       id: crypto.randomUUID(),
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      excerpt: article.excerpt ?? null,
+      featuredImage: article.featuredImage ?? null,
+      published: article.published ?? null
     };
     this.articles.set(newArticle.id, newArticle);
     return newArticle;
@@ -265,7 +274,14 @@ export class MemStorage implements IStorage {
       ...teamMember,
       id: crypto.randomUUID(),
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      bio: teamMember.bio ?? null,
+      photo: teamMember.photo ?? null,
+      email: teamMember.email ?? null,
+      phone: teamMember.phone ?? null,
+      linkedin: teamMember.linkedin ?? null,
+      yearsExperience: teamMember.yearsExperience ?? null,
+      education: teamMember.education ?? null
     };
     this.teamMembers.set(newMember.id, newMember);
     return newMember;
@@ -301,7 +317,9 @@ export class MemStorage implements IStorage {
     const newContent: PageContent = {
       ...pageContent,
       id: crypto.randomUUID(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      imageUrl: pageContent.imageUrl ?? null,
+      metaDescription: pageContent.metaDescription ?? null
     };
     this.pageContents.set(newContent.id, newContent);
     return newContent;
@@ -338,7 +356,14 @@ export class MemStorage implements IStorage {
       ...job,
       id: crypto.randomUUID(),
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      requirements: job.requirements ?? null,
+      benefits: job.benefits ?? null,
+      salaryRange: job.salaryRange ?? null,
+      employmentType: job.employmentType ?? null,
+      experienceLevel: job.experienceLevel ?? null,
+      applyEmail: job.applyEmail ?? null,
+      isActive: job.isActive ?? null
     };
     this.jobs.set(newJob.id, newJob);
     return newJob;
@@ -374,7 +399,9 @@ export class MemStorage implements IStorage {
     const newFaq: Faq = {
       ...faq,
       id: crypto.randomUUID(),
-      createdAt: new Date()
+      createdAt: new Date(),
+      category: faq.category ?? null,
+      orderIndex: faq.orderIndex ?? null
     };
     this.faqs.set(newFaq.id, newFaq);
     return newFaq;
@@ -414,7 +441,9 @@ export class MemStorage implements IStorage {
       ...admin,
       id: crypto.randomUUID(),
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      role: admin.role ?? null,
+      isActive: admin.isActive ?? null
     };
     this.admins.set(newAdmin.id, newAdmin);
     return newAdmin;
@@ -446,7 +475,12 @@ export class MemStorage implements IStorage {
     const updated: ConsultationPageSettings = {
       ...settings,
       id: this.consultationPageSettings?.id || crypto.randomUUID(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      consultationTypes: settings.consultationTypes ?? null,
+      caseTypes: settings.caseTypes ?? null,
+      timeSlots: settings.timeSlots ?? null,
+      bookingInstructions: settings.bookingInstructions ?? null,
+      isActive: settings.isActive ?? null
     };
     this.consultationPageSettings = updated;
     return updated;
@@ -467,7 +501,9 @@ export class MemStorage implements IStorage {
     const newForm: ContactForm = {
       ...contactForm,
       id: crypto.randomUUID(),
-      createdAt: new Date()
+      createdAt: new Date(),
+      phone: contactForm.phone ?? null,
+      isRead: contactForm.isRead ?? null
     };
     this.contactForms.set(newForm.id, newForm);
     return newForm;
@@ -497,7 +533,16 @@ export class MemStorage implements IStorage {
     const newBooking: ConsultationBooking = {
       ...booking,
       id: crypto.randomUUID(),
-      createdAt: new Date()
+      createdAt: new Date(),
+      name: booking.name ?? null,
+      email: booking.email ?? null,
+      phone: booking.phone ?? null,
+      consultationType: booking.consultationType ?? null,
+      caseType: booking.caseType ?? null,
+      preferredDate: booking.preferredDate ?? null,
+      preferredTime: booking.preferredTime ?? null,
+      message: booking.message ?? null,
+      status: booking.status ?? null
     };
     this.consultationBookings.set(newBooking.id, newBooking);
     return newBooking;
@@ -521,7 +566,18 @@ export class MemStorage implements IStorage {
     const updated: ContactInfo = {
       ...contactInfo,
       id: this.contactInfo?.id || crypto.randomUUID(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      siteName: contactInfo.siteName ?? null,
+      phone: contactInfo.phone ?? null,
+      email: contactInfo.email ?? null,
+      address: contactInfo.address ?? null,
+      addressLink: contactInfo.addressLink ?? null,
+      officeHours: contactInfo.officeHours ?? null,
+      facebook: contactInfo.facebook ?? null,
+      twitter: contactInfo.twitter ?? null,
+      linkedin: contactInfo.linkedin ?? null,
+      whatsapp: contactInfo.whatsapp ?? null,
+      mapEmbed: contactInfo.mapEmbed ?? null
     };
     this.contactInfo = updated;
     return updated;
@@ -546,7 +602,10 @@ export class MemStorage implements IStorage {
     const newTestimonial: Testimonial = {
       ...testimonial,
       id: crypto.randomUUID(),
-      createdAt: new Date()
+      createdAt: new Date(),
+      rating: testimonial.rating ?? null,
+      isAnonymous: testimonial.isAnonymous ?? null,
+      isFeatured: testimonial.isFeatured ?? null
     };
     this.testimonials.set(newTestimonial.id, newTestimonial);
     return newTestimonial;
@@ -586,7 +645,8 @@ export class MemStorage implements IStorage {
       ...service,
       id: crypto.randomUUID(),
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      isActive: service.isActive ?? null
     };
     this.consultationServices.set(newService.id, newService);
     return newService;
