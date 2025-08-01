@@ -34,21 +34,21 @@ const Consultation = () => {
   // استخدام البيانات من الإعدادات أو القيم الافتراضية
   const consultationTypes = settings?.consultation_types || [
     {
-      id: 'استشارة أونلاين',
+      id: 'online',
       name: 'استشارة أونلاين',
       duration: '30 دقيقة',
       price: 'مجانية',
       description: 'استشارة فورية عبر الإنترنت مع أحد محامينا المختصين'
     },
     {
-      id: 'استشارة في المكتب',
+      id: 'office',
       name: 'استشارة في المكتب',
       duration: '60 دقيقة',
       price: 'حسب الحالة',
       description: 'لقاء مباشر في مكتبنا للحصول على استشارة شاملة'
     },
     {
-      id: 'استشارة هاتفية',
+      id: 'phone',
       name: 'استشارة هاتفية',
       duration: '20 دقيقة',
       price: 'مجانية',

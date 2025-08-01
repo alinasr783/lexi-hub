@@ -35,7 +35,7 @@ export const HeroSection = () => {
                 )}
               </a>
             </Button>
-            <Button asChild variant="outline" size="lg" className="text-lg px-10 py-5 border-2 border-white/80 text-white hover:bg-white hover:text-primary shadow-2xl backdrop-blur-sm transition-all duration-300">
+            <Button asChild variant="outline" size="lg" className="text-lg px-10 py-5 border-2 border-blue-500 bg-transparent text-blue-500 hover:bg-blue-500 hover:text-white shadow-2xl backdrop-blur-sm transition-all duration-300">
               <a href="/services">
                 {t('learnMore')}
               </a>
