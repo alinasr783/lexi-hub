@@ -134,34 +134,30 @@ const ArticleDetail = () => {
                     تم النشر في {new Date(article.created_at).toLocaleDateString('ar-EG')}
                   </span>
                   
-                  <div className="flex items-center gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => navigator.share ? navigator.share({
-                        title: article.title,
-                        text: article.excerpt,
-                        url: window.location.href
-                      }) : navigator.clipboard.writeText(window.location.href)}
-                    >
-                      <Share className="w-4 h-4 mr-2" />
-                      مشاركة
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => {
-                        const favorites = JSON.parse(localStorage.getItem('favoriteArticles') || '[]');
-                        const updatedFavorites = favorites.includes(article.id) 
-                          ? favorites.filter((id: string) => id !== article.id)
-                          : [...favorites, article.id];
-                        localStorage.setItem('favoriteArticles', JSON.stringify(updatedFavorites));
-                      }}
-                    >
-                      <Bookmark className="w-4 h-4 mr-2" />
-                      حفظ
-                    </Button>
-                  </div>
+                   <div className="flex items-center gap-2">
+                     <Button 
+                       variant="outline" 
+                       size="sm"
+                       onClick={async () => {
+                         try {
+                           if (navigator.share) {
+                             await navigator.share({
+                               title: article.title,
+                               text: article.excerpt,
+                               url: window.location.href
+                             });
+                           } else {
+                             await navigator.clipboard.writeText(window.location.href);
+                           }
+                         } catch (error) {
+                           console.log('Share failed:', error);
+                         }
+                       }}
+                     >
+                       <Share className="w-4 h-4 mr-2" />
+                       مشاركة
+                     </Button>
+                   </div>
                 </div>
               </div>
 
@@ -196,18 +192,32 @@ const ArticleDetail = () => {
               <Card className="mb-12">
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center">
-                      <User className="w-8 h-8 text-primary-foreground" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold mb-2">{article.author_name}</h3>
+                     <Link 
+                       to={`/team/${article.author_name.toLowerCase().replace(/\s+/g, '-')}`}
+                       className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition-transform"
+                     >
+                       <User className="w-8 h-8 text-primary-foreground" />
+                     </Link>
+                     <div className="flex-1">
+                       <Link 
+                         to={`/team/${article.author_name.toLowerCase().replace(/\s+/g, '-')}`}
+                         className="text-xl font-semibold mb-2 hover:text-primary transition-colors cursor-pointer inline-block"
+                       >
+                         {article.author_name}
+                       </Link>
                       <p className="text-muted-foreground mb-4">
                         محامي متخصص في القانون التجاري وقانون الشركات مع خبرة تزيد عن 12 عاماً في المجال القانوني. 
                         حاصل على درجة الدكتوراه في القانون التجاري من جامعة الملك سعود.
                       </p>
-                      <Button variant="outline" size="sm">
-                        عرض المزيد من المقالات
-                      </Button>
+                       <Button 
+                         variant="outline" 
+                         size="sm"
+                         asChild
+                       >
+                         <Link to={`/articles?author=${encodeURIComponent(article.author_name)}`}>
+                           عرض المزيد من المقالات
+                         </Link>
+                       </Button>
                     </div>
                   </div>
                 </CardContent>

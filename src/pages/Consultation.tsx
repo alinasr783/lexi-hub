@@ -234,12 +234,12 @@ const Consultation = () => {
                   <p className="text-muted-foreground mb-12">اختر النوع المناسب لك من الاستشارات القانونية المتاحة</p>
                   
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {consultationTypes.map((type) => (
-                      <Card 
-                        key={type.id} 
-                        className={`cursor-pointer hover-card ${selectedType === type.id ? 'ring-2 ring-accent' : ''}`}
-                        onClick={() => handleTypeSelection(type.id)}
-                      >
+                     {consultationTypes.map((type) => (
+                       <Card 
+                         key={type.id} 
+                         className={`cursor-pointer hover-card ${selectedType === type.name ? 'ring-2 ring-accent' : ''}`}
+                         onClick={() => handleTypeSelection(type.name)}
+                       >
                         <CardContent className="p-6 text-center">
                           <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
                             <Calendar className="w-8 h-8 text-accent" />
