@@ -167,6 +167,39 @@ export type Database = {
         }
         Relationships: []
       }
+      consultation_services: {
+        Row: {
+          created_at: string
+          description: string
+          duration: string
+          id: string
+          is_active: boolean
+          name: string
+          price: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          duration: string
+          id?: string
+          is_active?: boolean
+          name: string
+          price: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          duration?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          price?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contact_forms: {
         Row: {
           created_at: string | null
