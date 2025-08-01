@@ -25,7 +25,7 @@ export const HeroSection = () => {
             {t('heroSubtitle')}
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <Button asChild size="lg" className="btn-secondary text-lg px-10 py-5 shadow-2xl hover:shadow-glow">
+            <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent-light text-lg px-10 py-5 shadow-2xl transition-all duration-300 hover:shadow-lg hover:scale-105">
               <a href="/consultation">
                 {t('bookConsultation')}
                 {language === 'ar' ? (
@@ -35,7 +35,7 @@ export const HeroSection = () => {
                 )}
               </a>
             </Button>
-            <Button asChild variant="outline" size="lg" className="text-lg px-10 py-5 border-2 border-white/80 text-white hover:bg-white hover:text-primary shadow-2xl backdrop-blur-sm">
+            <Button asChild variant="outline" size="lg" className="text-lg px-10 py-5 border-2 border-white/80 text-white hover:bg-white hover:text-primary shadow-2xl backdrop-blur-sm transition-all duration-300">
               <a href="/services">
                 {t('learnMore')}
               </a>

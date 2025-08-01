@@ -34,21 +34,21 @@ const Consultation = () => {
   // استخدام البيانات من الإعدادات أو القيم الافتراضية
   const consultationTypes = settings?.consultation_types || [
     {
-      id: 'online',
+      id: 'استشارة أونلاين',
       name: 'استشارة أونلاين',
       duration: '30 دقيقة',
       price: 'مجانية',
       description: 'استشارة فورية عبر الإنترنت مع أحد محامينا المختصين'
     },
     {
-      id: 'office',
+      id: 'استشارة في المكتب',
       name: 'استشارة في المكتب',
       duration: '60 دقيقة',
       price: 'حسب الحالة',
       description: 'لقاء مباشر في مكتبنا للحصول على استشارة شاملة'
     },
     {
-      id: 'phone',
+      id: 'استشارة هاتفية',
       name: 'استشارة هاتفية',
       duration: '20 دقيقة',
       price: 'مجانية',
@@ -78,17 +78,17 @@ const Consultation = () => {
     '17:00'
   ];
 
-  const handleTypeSelection = (typeId) => {
+  const handleTypeSelection = (typeId: string) => {
     setSelectedType(typeId);
     setFormData(prev => ({ ...prev, consultation_type: typeId }));
     setStep(2);
   };
 
-  const handleInputChange = (field, value) => {
+  const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
@@ -237,8 +237,8 @@ const Consultation = () => {
                      {consultationTypes.map((type) => (
                        <Card 
                          key={type.id} 
-                         className={`cursor-pointer hover-card ${selectedType === type.name ? 'ring-2 ring-accent' : ''}`}
-                         onClick={() => handleTypeSelection(type.name)}
+                         className={`cursor-pointer hover-card ${selectedType === type.id ? 'ring-2 ring-accent' : ''}`}
+                         onClick={() => handleTypeSelection(type.id)}
                        >
                         <CardContent className="p-6 text-center">
                           <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
