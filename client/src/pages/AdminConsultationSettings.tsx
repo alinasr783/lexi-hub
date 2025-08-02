@@ -16,7 +16,17 @@ const AdminConsultationSettings = () => {
   const { toast } = useToast();
   const { settings, updateSettings, isLoading } = useConsultationSettings();
   
-  const [formData, setFormData] = useState<any>({
+interface ConsultationSettings {
+    hero_title: string;
+    hero_description: string;
+    consultation_types: Array<{id: string; name: string; duration: string; price: string}>;
+    time_slots: string[];
+    case_types: string[];
+    booking_instructions: string;
+    is_active: boolean;
+  }
+
+  const [formData, setFormData] = useState<ConsultationSettings>({
     hero_title: '',
     hero_description: '',
     consultation_types: [],
@@ -47,9 +57,9 @@ const AdminConsultationSettings = () => {
       setFormData({
         hero_title: settings.hero_title,
         hero_description: settings.hero_description,
-        consultation_types: settings.consultation_types || [] as any,
-        time_slots: settings.time_slots || [] as any,
-        case_types: settings.case_types || [] as any,
+        consultation_types: settings.consultation_types || [],
+        time_slots: settings.time_slots || [],
+        case_types: settings.case_types || [],
         booking_instructions: settings.booking_instructions || '',
         is_active: settings.is_active
       });
@@ -81,7 +91,7 @@ const AdminConsultationSettings = () => {
 
   const addConsultationType = () => {
     if (newConsultationType.name && newConsultationType.duration) {
-      setFormData(prev => ({
+      setFormData((prev: ConsultationSettings) => ({
         ...prev,
         consultation_types: [...prev.consultation_types, { ...newConsultationType, id: Date.now().toString() }]
       }));
@@ -90,15 +100,15 @@ const AdminConsultationSettings = () => {
   };
 
   const removeConsultationType = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev: ConsultationSettings) => ({
       ...prev,
-      consultation_types: prev.consultation_types.filter((_, i) => i !== index)
+      consultation_types: prev.consultation_types.filter((_: any, i: number) => i !== index)
     }));
   };
 
   const addTimeSlot = () => {
     if (newTimeSlot) {
-      setFormData(prev => ({
+      setFormData((prev: ConsultationSettings) => ({
         ...prev,
         time_slots: [...prev.time_slots, newTimeSlot]
       }));
@@ -107,15 +117,15 @@ const AdminConsultationSettings = () => {
   };
 
   const removeTimeSlot = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev: ConsultationSettings) => ({
       ...prev,
-      time_slots: prev.time_slots.filter((_, i) => i !== index)
+      time_slots: prev.time_slots.filter((_: any, i: number) => i !== index)
     }));
   };
 
   const addCaseType = () => {
     if (newCaseType) {
-      setFormData(prev => ({
+      setFormData((prev: ConsultationSettings) => ({
         ...prev,
         case_types: [...prev.case_types, newCaseType]
       }));
@@ -124,9 +134,9 @@ const AdminConsultationSettings = () => {
   };
 
   const removeCaseType = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev: ConsultationSettings) => ({
       ...prev,
-      case_types: prev.case_types.filter((_, i) => i !== index)
+      case_types: prev.case_types.filter((_: any, i: number) => i !== index)
     }));
   };
 
@@ -172,7 +182,7 @@ const AdminConsultationSettings = () => {
                 <Input
                   id="hero_title"
                   value={formData.hero_title}
-                  onChange={(e) => setFormData(prev => ({ ...prev, hero_title: e.target.value }))}
+                  onChange={(e) => setFormData((prev: ConsultationSettings) => ({ ...prev, hero_title: e.target.value }))}
                   placeholder="احجز استشارة قانونية"
                 />
               </div>
@@ -181,7 +191,7 @@ const AdminConsultationSettings = () => {
                 <Textarea
                   id="hero_description"
                   value={formData.hero_description}
-                  onChange={(e) => setFormData(prev => ({ ...prev, hero_description: e.target.value }))}
+                  onChange={(e) => setFormData((prev: ConsultationSettings) => ({ ...prev, hero_description: e.target.value }))}
                   placeholder="احصل على استشارة قانونية متخصصة من فريق الخبراء لدينا"
                   rows={3}
                 />
@@ -191,7 +201,7 @@ const AdminConsultationSettings = () => {
                 <Textarea
                   id="booking_instructions"
                   value={formData.booking_instructions}
-                  onChange={(e) => setFormData(prev => ({ ...prev, booking_instructions: e.target.value }))}
+                  onChange={(e) => setFormData((prev: ConsultationSettings) => ({ ...prev, booking_instructions: e.target.value }))}
                   placeholder="يرجى ملء النموذج بدقة وسنتواصل معك خلال 24 ساعة"
                   rows={2}
                 />
@@ -201,7 +211,7 @@ const AdminConsultationSettings = () => {
                 <Switch
                   id="is_active"
                   checked={formData.is_active}
-                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_active: checked }))}
+                  onCheckedChange={(checked) => setFormData((prev: ConsultationSettings) => ({ ...prev, is_active: checked }))}
                 />
               </div>
             </CardContent>
@@ -235,7 +245,7 @@ const AdminConsultationSettings = () => {
                 </Button>
               </div>
               <div className="flex flex-wrap gap-2">
-                {formData.consultation_types.map((type, index) => (
+                {formData.consultation_types.map((type: any, index: number) => (
                   <Badge key={index} variant="secondary" className="flex items-center gap-2">
                     <span>{type.name} - {type.duration} - {type.price}</span>
                     <X 
@@ -266,7 +276,7 @@ const AdminConsultationSettings = () => {
                 </Button>
               </div>
               <div className="flex flex-wrap gap-2">
-                {formData.time_slots.map((slot, index) => (
+                {formData.time_slots.map((slot: string, index: number) => (
                   <Badge key={index} variant="secondary" className="flex items-center gap-2">
                     <span>{slot}</span>
                     <X 
@@ -297,7 +307,7 @@ const AdminConsultationSettings = () => {
                 </Button>
               </div>
               <div className="flex flex-wrap gap-2">
-                {formData.case_types.map((type, index) => (
+                {formData.case_types.map((type: string, index: number) => (
                   <Badge key={index} variant="secondary" className="flex items-center gap-2">
                     <span>{type}</span>
                     <X 

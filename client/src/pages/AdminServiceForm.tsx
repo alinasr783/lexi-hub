@@ -67,7 +67,15 @@ const AdminServiceForm = () => {
 
       if (error) throw error;
       if (data) {
-        setFormData(data);
+        setFormData({
+          ...data,
+          detailed_description: data.detailed_description || '',
+          duration: data.duration || '',
+          price_range: data.price_range || '',
+          icon: data.icon || '',
+          image: data.image || '',
+          required_documents: data.required_documents || []
+        });
       }
     } catch (error) {
       toast({

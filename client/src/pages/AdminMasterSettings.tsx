@@ -19,10 +19,12 @@ interface ContactInfo {
   phone: string;
   email: string;
   address: string;
+  address_link?: string;
   whatsapp?: string;
   facebook?: string;
   linkedin?: string;
   twitter?: string;
+  instagram?: string;
   office_hours?: string;
   map_embed?: string;
 }
@@ -230,7 +232,19 @@ const AdminMasterSettings = () => {
       .select('*')
       .single();
       
-    if (data) setContactInfo(data);
+    if (data) setContactInfo({
+      ...data,
+      phone: data.phone || '',
+      email: data.email || '',
+      address: data.address || '',
+      address_link: data.address_link || '',
+      office_hours: data.office_hours || '',
+      map_embed: data.map_embed || '',
+      whatsapp: data.whatsapp || '',
+      facebook: data.facebook || '',
+      twitter: data.twitter || '',
+      linkedin: data.linkedin || ''
+    });
   };
 
   const loadAboutContent = async () => {
@@ -240,7 +254,11 @@ const AdminMasterSettings = () => {
       .eq('page_key', 'about')
       .single();
       
-    if (data) setAboutContent(data);
+    if (data) setAboutContent({
+      ...data,
+      image_url: data.image_url || undefined,
+      meta_description: data.meta_description || undefined
+    });
   };
 
   const loadTestimonials = async () => {

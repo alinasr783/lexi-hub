@@ -65,12 +65,22 @@ const AdminTeamForm = () => {
       const { data, error } = await supabase
         .from('team_members')
         .select('*')
-        .eq('id', id)
+        .eq('id', id!)
         .single();
 
       if (error) throw error;
       if (data) {
-        setFormData(data);
+        setFormData({
+          ...data,
+          bio: data.bio || '',
+          email: data.email || '',
+          phone: data.phone || '',
+          photo: data.photo || '',
+          linkedin: data.linkedin || '',
+          specialization: data.specialization || '',
+          education: data.education || [],
+          years_experience: data.years_experience || 0
+        });
       }
     } catch (error) {
       toast({
@@ -161,7 +171,7 @@ const AdminTeamForm = () => {
         const { error } = await supabase
           .from('team_members')
           .update(formData)
-          .eq('id', id);
+          .eq('id', id!);
 
         if (error) throw error;
 
