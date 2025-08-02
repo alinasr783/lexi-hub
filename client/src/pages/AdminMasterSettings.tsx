@@ -138,7 +138,7 @@ const AdminMasterSettings = () => {
   });
 
   // Testimonials State
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [testimonials, setTestimonials] = useState<any[]>([]);
   const [newTestimonial, setNewTestimonial] = useState<Testimonial>({
     client_name: '',
     testimonial: '',

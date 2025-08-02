@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 export const TeamSection = () => {
   const { t } = useLanguage();
-  const [teamMembers, setTeamMembers] = useState([]);
+  const [teamMembers, setTeamMembers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

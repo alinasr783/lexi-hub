@@ -6,7 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 export const ArticlesSection = () => {
   const { language, t } = useLanguage();
-  const [articles, setArticles] = useState([]);
+  const [articles, setArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

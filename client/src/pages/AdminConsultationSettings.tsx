@@ -16,7 +16,7 @@ const AdminConsultationSettings = () => {
   const { toast } = useToast();
   const { settings, updateSettings, isLoading } = useConsultationSettings();
   
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<any>({
     hero_title: '',
     hero_description: '',
     consultation_types: [],
@@ -47,10 +47,10 @@ const AdminConsultationSettings = () => {
       setFormData({
         hero_title: settings.hero_title,
         hero_description: settings.hero_description,
-        consultation_types: settings.consultation_types || [],
-        time_slots: settings.time_slots || [],
-        case_types: settings.case_types || [],
-        booking_instructions: settings.booking_instructions,
+        consultation_types: settings.consultation_types || [] as any,
+        time_slots: settings.time_slots || [] as any,
+        case_types: settings.case_types || [] as any,
+        booking_instructions: settings.booking_instructions || '',
         is_active: settings.is_active
       });
     }

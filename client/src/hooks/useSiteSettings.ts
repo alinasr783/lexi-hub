@@ -19,6 +19,7 @@ export interface SiteSettings {
   showArticlesSection: boolean;
   siteName: string;
   siteDescription: string;
+  logoUrl: string;
   maintenanceMode: boolean;
 }
 
@@ -41,6 +42,7 @@ const DEFAULT_SETTINGS: SiteSettings = {
   showArticlesSection: true,
   siteName: 'LexiHub',
   siteDescription: 'خدمات قانونية متخصصة',
+  logoUrl: '',
   maintenanceMode: false,
 };
 
