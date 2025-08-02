@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 export const TestimonialsSection = () => {
   const { t } = useLanguage();
-  const [testimonials, setTestimonials] = useState<any[]>([]);
+  const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

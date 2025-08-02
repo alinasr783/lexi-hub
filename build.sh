@@ -1,4 +1,4 @@
 #!/bin/bash
 echo "Building the application..."
-npx vite build --outDir dist/public
+npm run build
 echo "Build completed successfully!"

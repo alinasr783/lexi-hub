@@ -9,7 +9,7 @@ const iconMap = {
 
 export const ServicesSection = () => {
   const { t } = useLanguage();
-  const [services, setServices] = useState<any[]>([]);
+  const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -59,7 +59,7 @@ export const ServicesSection = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {services.map((service) => {
-            const IconComponent = (iconMap as any)[service.icon] || Scale;
+            const IconComponent = iconMap[service.icon] || Scale;
             return (
               <div key={service.id} className="card-elegant group cursor-pointer">
                 <div className="flex items-center justify-center w-16 h-16 bg-gradient-primary rounded-2xl mb-6 mx-auto group-hover:scale-110 transition-smooth">

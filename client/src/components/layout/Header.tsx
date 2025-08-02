@@ -1,51 +1,23 @@
-import { useState, useEffect } from 'react';
-import { Moon, Sun, Globe, Menu, X, Scale, Phone, Mail, ChevronDown } from 'lucide-react';
+import { useState } from 'react';
+import { Moon, Sun, Globe, Menu, X, Scale, Phone, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useTheme } from '@/hooks/useTheme';
 import { useContactInfo } from '@/hooks/useContactInfo';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
-import { supabase } from '@/integrations/supabase/client';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [articleCategories, setArticleCategories] = useState<string[]>([]);
   const { language, setLanguage, t } = useLanguage();
   const { theme, toggleTheme } = useTheme();
   const { contactInfo } = useContactInfo();
   const { settings } = useSiteSettings();
 
-  useEffect(() => {
-    loadArticleCategories();
-  }, []);
-
-  const loadArticleCategories = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('articles')
-        .select('category')
-        .eq('published', true);
-
-      if (error) throw error;
-      
-      // Get unique categories
-      const uniqueCategories = Array.from(new Set(data?.map(article => article.category) || []));
-      setArticleCategories(uniqueCategories);
-    } catch (error) {
-      console.error('Error loading categories:', error);
-    }
-  };
-
   const navigation = [
     { key: 'home', href: '/', show: settings.showHomePage },
     { key: 'services', href: '/services', show: settings.showServicesPage },
     { key: 'team', href: '/team', show: settings.showTeamPage },
+    { key: 'articles', href: '/articles', show: settings.showArticlesPage },
     { key: 'about', href: '/about', show: settings.showAboutPage },
     { key: 'contact', href: '/contact', show: settings.showContactPage },
   ].filter(item => item.show);
@@ -57,19 +29,11 @@ export const Header = () => {
         <div className="flex justify-between items-center h-16">
           {/* الشعار */}
           <div className="flex items-center gap-3">
-            {settings.logoUrl ? (
-              <img 
-                src={settings.logoUrl} 
-                alt="Logo" 
-                className="w-10 h-10 object-contain"
-              />
-            ) : (
-              <div className="bg-gradient-primary p-2 rounded-lg">
-                <Scale className="w-6 h-6 text-primary-foreground" />
-              </div>
-            )}
+            <div className="bg-gradient-primary p-2 rounded-lg">
+              <Scale className="w-6 h-6 text-primary-foreground" />
+            </div>
             <div className="font-bold text-xl text-gradient">
-              {contactInfo?.site_name || settings.siteName || (language === 'ar' ? 'ليكسي هاب' : 'Lexi Hub')}
+              {contactInfo?.site_name || (language === 'ar' ? 'ليكسي هاب' : 'Lexi Hub')}
             </div>
           </div>
 
@@ -84,33 +48,6 @@ export const Header = () => {
                 {t(item.key)}
               </a>
             ))}
-            
-            {/* قائمة المقالات المنسدلة */}
-            {settings.showArticlesPage && (
-              <DropdownMenu>
-                <DropdownMenuTrigger className="flex items-center gap-1 text-foreground hover:text-primary transition-smooth font-medium">
-                  {t('articles')}
-                  <ChevronDown className="w-4 h-4" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-background border border-border">
-                  <DropdownMenuItem asChild>
-                    <a href="/articles" className="w-full">
-                      جميع المقالات
-                    </a>
-                  </DropdownMenuItem>
-                  {articleCategories.map((category) => (
-                    <DropdownMenuItem key={category} asChild>
-                      <a 
-                        href={`/articles?category=${encodeURIComponent(category)}`}
-                        className="w-full"
-                      >
-                        {category}
-                      </a>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
           </nav>
 
           {/* أزرار التحكم */}

@@ -56,7 +56,7 @@ const AdminArticles = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setArticles((data || []) as any);
+      setArticles(data || []);
     } catch (error) {
       toast({
         title: "خطأ",

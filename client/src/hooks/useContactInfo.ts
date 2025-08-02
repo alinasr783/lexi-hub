@@ -37,8 +37,8 @@ export const useContactInfo = () => {
 
       if (error) throw error;
       setContactInfo(data as ContactInfo);
-    } catch (err: any) {
-      setError(err?.message || 'حدث خطأ');
+    } catch (err) {
+      setError(err.message);
     } finally {
       setIsLoading(false);
     }
@@ -78,7 +78,7 @@ export const useContactInfo = () => {
       return { success: true };
     } catch (err) {
       console.error('Update contact info error:', err);
-      return { success: false, error: (err as any)?.message || 'حدث خطأ غير متوقع' };
+      return { success: false, error: err?.message || 'حدث خطأ غير متوقع' };
     }
   };
 

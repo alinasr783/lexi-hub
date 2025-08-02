@@ -2,8 +2,19 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-const SUPABASE_URL = "https://uxbluzkvpfzkdibuaztp.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4Ymx1emt2cGZ6a2RpYnVhenRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM4OTQ0NjUsImV4cCI6MjA2OTQ3MDQ2NX0.NgeKhgmahpLlPuXJHwS4eWhIFRC8GYuxSPnBd-sIwTQ";
+// نحتاج لتبديل المتغيرات لأنها تم خلطها في متغيرات البيئة
+let supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://uxbluzkvpfzkdibuaztp.supabase.co";
+let supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4Ymx1emt2cGZ6a2RpYnVhenRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM4OTQ0NjUsImV4cCI6MjA2OTQ3MDQ2NX0.NgeKhgmahpLlPuXJHwS4eWhIFRC8GYuxSPnBd-sIwTQ";
+
+// إذا كان الـ URL يبدو كـ JWT token، قم بتبديلهما
+if (supabaseUrl.startsWith('eyJ')) {
+  const temp = supabaseUrl;
+  supabaseUrl = supabaseKey;
+  supabaseKey = temp;
+}
+
+const SUPABASE_URL = supabaseUrl;
+const SUPABASE_PUBLISHABLE_KEY = supabaseKey;
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";

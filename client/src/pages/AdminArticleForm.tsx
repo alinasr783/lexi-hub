@@ -18,10 +18,10 @@ interface ArticleFormData {
   slug: string;
   author_name: string;
   category: string;
-  excerpt: string | null;
+  excerpt: string;
   content: string;
-  featured_image: string | null;
-  published: boolean | null;
+  featured_image: string;
+  published: boolean;
 }
 
 const categories = [
@@ -47,9 +47,9 @@ const AdminArticleForm = () => {
     slug: '',
     author_name: '',
     category: '',
-    excerpt: null,
+    excerpt: '',
     content: '',
-    featured_image: null,
+    featured_image: '',
     published: false
   });
 
@@ -73,7 +73,7 @@ const AdminArticleForm = () => {
       const { data, error } = await supabase
         .from('articles')
         .select('*')
-        .eq('id', id!)
+        .eq('id', id)
         .single();
 
       if (error) throw error;
@@ -119,7 +119,7 @@ const AdminArticleForm = () => {
         const { error } = await supabase
           .from('articles')
           .update(formData)
-          .eq('id', id!);
+          .eq('id', id);
 
         if (error) throw error;
 
@@ -254,7 +254,7 @@ const AdminArticleForm = () => {
               </div>
 
               <ImageUpload
-                value={formData.featured_image || ''}
+                value={formData.featured_image}
                 onChange={(url) => handleInputChange('featured_image', url)}
                 bucket="article-images"
                 folder="featured"
@@ -265,7 +265,7 @@ const AdminArticleForm = () => {
                 <Label htmlFor="excerpt">نبذة مختصرة *</Label>
                 <Textarea
                   id="excerpt"
-                  value={formData.excerpt || ''}
+                  value={formData.excerpt}
                   onChange={(e) => handleInputChange('excerpt', e.target.value)}
                   placeholder="نبذة مختصرة عن المقال..."
                   className="min-h-[80px]"
@@ -298,7 +298,7 @@ const AdminArticleForm = () => {
               <div className="flex items-center space-x-2 space-x-reverse">
                 <Switch
                   id="published"
-                  checked={Boolean(formData.published)}
+                  checked={formData.published}
                   onCheckedChange={(checked) => handleInputChange('published', checked)}
                 />
                 <Label htmlFor="published">نشر المقال</Label>
